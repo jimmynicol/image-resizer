@@ -11,7 +11,7 @@ module.exports = function(grunt){
       options: {
         jshintrc: '.jshintrc'
       },
-      all: ['Gruntfile.js', 'index.js', 'lib/{,*/}*.js', 'test/{,*/}*.js']
+      all: ['Gruntfile.js', 'index.js', 'lib/{,*/}*.js']
     },
     simplemocha: {
       options: {
@@ -21,16 +21,16 @@ module.exports = function(grunt){
         ui: 'bdd'
       },
       all: {
-        src: ['test/**/*.js']
+        src: ['test/**/*-test.js']
       }
     },
     watch: {
       test: {
-        files: ['lib/**/*.js', 'test/**/*.js'],
+        files: ['lib/**/*.js', 'test/**/*-test.js'],
         tasks: ['simplemocha']
       },
       jshint: {
-        files: ['Gruntfile.js', 'index.js', 'lib/**/*.js', 'test/**/*.js'],
+        files: ['Gruntfile.js', 'index.js', 'lib/**/*.js'],
         tasks: ['jshint']
       }
     }
