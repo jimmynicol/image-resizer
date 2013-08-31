@@ -1,16 +1,17 @@
 'use strict';
 
-var Img, Logger, env, http, port, redis, responses, server;
+var Img, Logger, env, http, port, redis, responses, favicon, server;
 
 // load modules
 require('colors');
 http      = require('http');
 
 // load custom modules
+Logger    = require('./logger');
 Img       = require('./image');
 redis     = require('./redis');
 responses = require('./responses');
-Logger    = require('./logger');
+favicon   = require('./favicon');
 
 // set the default environment and port
 env = process.env.NODE_ENV || 'development';
@@ -18,7 +19,7 @@ port = process.env.PORT || 5000;
 
 
 server = http.createServer(function(request, response) {
-  var generateVersion, img, log, _ref;
+  var generateVersion, img, log;
 
   // create a Logger instance
   log = new Logger(request, { port: port });
@@ -27,31 +28,31 @@ server = http.createServer(function(request, response) {
     img.findOriginal()
       .then(function(original) {
         if (original) {
-          log.log("Original retrieved, processing optimised version");
+          log.log('Original retrieved, processing optimised version');
 
           img.generateVersion()
             .then(function() {
-              responses.response_302(response, log, img);
+              responses.response302(response, log, img);
             })
             .catch(function(err) {
-              responses.response_500(response, log, err.message);
+              responses.response500(response, log, err.message);
             })
             .finally(function() {
               img.deleteTmpFile();
             });
         } else {
-          log.log("No image can be found by that uuid");
-          responses.response_404(response, log);
+          log.log('No image can be found by that uuid');
+          responses.response404(response, log);
         }
-      });
-      .catch(function(err) {
-        responses.response_500(response, log, err.message);
       })
+      .catch(function(err) {
+        responses.response500(response, log, err.message);
+      });
   };
 
   switch (request.url){
   case '/':
-    responses.response_404(response, log);
+    responses.response404(response, log);
     break;
 
   case '/favicon.ico':
@@ -60,11 +61,11 @@ server = http.createServer(function(request, response) {
 
   case '/health':
     redis.ping()
-      .done(function(data) {
-        responses.response_200(response, log, 'Success!');
+      .done(function() {
+        responses.response200(response, log, 'Success!');
       })
       .catch(function(err) {
-        responses.response_500(response, log, err.message);
+        responses.response500(response, log, err.message);
       });
     break;
 
@@ -74,21 +75,21 @@ server = http.createServer(function(request, response) {
 
     // check to see if the extension is in the valid list
     if (!img.validExtension()) {
-      log.log("Unknown file extension:", img.ext);
-      return responses.responses_500(response, log, null);
+      log.log('Unknown file extension:', img.ext);
+      return responses.responses500(response, log, null);
     }
 
     // if this is a request for the exif metadata in JSON format
     if (img.json) {
-      log.log("retrieving image metadata");
+      log.log('retrieving image metadata');
       img.getMetadata()
         .done(function(metadata) {
-          responses.response_200(response, log, JSON.stringify(metadata));
+          responses.response200(response, log, JSON.stringify(metadata));
         });
       return;
     }
 
-    log.log("Processing: " + (img.filename().bold));
+    log.log('Processing: ' + (img.filename().bold));
 
     // if this is a flush request
     if (img.flush) {
@@ -97,19 +98,19 @@ server = http.createServer(function(request, response) {
     }
 
     img.findVersion()
-      .done(function(versionExists) {
+      .then(function(versionExists) {
         if (versionExists === true) {
-          log.log("Version found");
-          responses.response_302(response, log, img);
+          log.log('Version found');
+          responses.response302(response, log, img);
         } else {
-          log.log("Version does not exist");
+          log.log('Version does not exist');
           generateVersion(img);
         }
       })
       .catch(function(err) {
-        responses.response_500(response, log, err.message);
+        responses.response500(response, log, err.message);
       });
-  };
+  }
 });
 
 server.listen(port);
