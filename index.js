@@ -8,25 +8,28 @@ http      = require('http');
 fs        = require('fs');
 _         = require('lodash');
 
-// load custom modules
-Logger    = require('./logger');
-Img       = require('./image');
-redis     = require('./redis');
-responses = require('./responses');
-favicon   = require('./favicon');
-
 // check for a local environment config file
 if( fs.existsSync('./local_environment.js')){
   var config = require('./local_environment');
+
+  console.log('\nLoading local config file'.green);
 
   // add these variables to the environment, basically a convenience from
   // having to set them manually each time.
   _.forEach(config, function(value, key){
     if (value !== ''){
+      console.log('adding:', key.bold);
       process.env[key] = value;
     }
   });
 }
+
+// load custom modules
+Logger    = require('./lib/logger');
+Img       = require('./lib/image');
+redis     = require('./lib/redis');
+responses = require('./lib/response');
+favicon   = require('./lib/favicon');
 
 // set the default environment and port
 env  = process.env.NODE_ENV || 'development';
