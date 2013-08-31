@@ -1,10 +1,12 @@
 'use strict';
 
-var Img, Logger, env, http, port, redis, responses, favicon, server;
+var Img, Logger, env, http, fs, _, port, redis, responses, favicon, server;
 
 // load modules
 require('colors');
 http      = require('http');
+fs        = require('fs');
+_         = require('lodash');
 
 // load custom modules
 Logger    = require('./logger');
@@ -13,8 +15,21 @@ redis     = require('./redis');
 responses = require('./responses');
 favicon   = require('./favicon');
 
+// check for a local environment config file
+if( fs.existsSync('./local_environment.js')){
+  var config = require('./local_environment');
+
+  // add these variables to the environment, basically a convenience from
+  // having to set them manually each time.
+  _.forEach(config, function(value, key){
+    if (value !== ''){
+      process.env[key] = value;
+    }
+  });
+}
+
 // set the default environment and port
-env = process.env.NODE_ENV || 'development';
+env  = process.env.NODE_ENV || 'development';
 port = process.env.PORT || 5000;
 
 
