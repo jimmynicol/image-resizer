@@ -36,4 +36,18 @@ describe('Image', function(){
     i.dir.should.equal(pg().dir);
   });
 
+  describe('#_optionsString', function(){
+    it('should set the appropriate string', function(){
+      request.url = pg({query: 'h=50&width=50'}).path;
+      var i = new Img(request);
+      i._optionsString().should.match(/_ar_w50_h50/);
+    });
+
+    it('should not include crop dimensions in basic request', function(){
+      var i = new Img(request);
+      i._optionsString().should.not.match(/_cx/);
+      i._optionsString().should.not.match(/_cy/);
+    });
+  });
+
 });

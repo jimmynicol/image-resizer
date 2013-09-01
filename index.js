@@ -44,27 +44,29 @@ server = http.createServer(function(request, response) {
 
   generateVersion = function(img) {
     img.findOriginal()
-      .then(function(original) {
+      .catch(function(err) {
+        responses.response500(response, log, err.message);
+      })
+      .done(function(original) {
         if (original) {
-          log.log('Original retrieved, processing optimised version');
+          log.log('Processing optimised version');
 
           img.generateVersion()
-            .then(function() {
-              responses.response302(response, log, img);
-            })
             .catch(function(err) {
               responses.response500(response, log, err.message);
             })
             .finally(function() {
+              console.log('generateVersion:finally');
               img.deleteTmpFile();
+            })
+            .done(function() {
+              console.log('generateVersion:done');
+              responses.response302(response, log, img);
             });
         } else {
           log.log('No image can be found by that uuid');
           responses.response404(response, log);
         }
-      })
-      .catch(function(err) {
-        responses.response500(response, log, err.message);
       });
   };
 
@@ -116,7 +118,10 @@ server = http.createServer(function(request, response) {
     }
 
     img.findVersion()
-      .then(function(versionExists) {
+      .catch(function(err) {
+        responses.response500(response, log, err.message);
+      })
+      .done(function(versionExists) {
         if (versionExists === true) {
           log.log('Version found');
           responses.response302(response, log, img);
@@ -124,9 +129,6 @@ server = http.createServer(function(request, response) {
           log.log('Version does not exist');
           generateVersion(img);
         }
-      })
-      .catch(function(err) {
-        responses.response500(response, log, err.message);
       });
   }
 });
