@@ -56,11 +56,9 @@ server = http.createServer(function(request, response) {
               responses.response500(response, log, err.message);
             })
             .finally(function() {
-              console.log('generateVersion:finally');
               img.deleteTmpFile();
             })
             .done(function() {
-              console.log('generateVersion:done');
               responses.response302(response, log, img);
             });
         } else {
@@ -103,6 +101,9 @@ server = http.createServer(function(request, response) {
     if (img.json) {
       log.log('retrieving image metadata');
       img.getMetadata()
+        .catch(function(err){
+          responses.response500(response, log, err.message);
+        })
         .done(function(metadata) {
           responses.response200(response, log, JSON.stringify(metadata));
         });
@@ -114,7 +115,14 @@ server = http.createServer(function(request, response) {
     // if this is a flush request
     if (img.flush) {
       log.log('Flushing any stored version and recreating');
-      return generateVersion(img);
+      img.flushKeys()
+        .catch(function(err){
+          responses.response500(response, log, err.message);
+        })
+        .done(function(){
+          generateVersion(img);
+        });
+      return;
     }
 
     img.findVersion()

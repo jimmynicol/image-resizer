@@ -17,5 +17,9 @@ module.exports = {
   "REDISTOGO_URL": "redis://localhost:6379",
 
   // Redis key namespace
-  "REDIS_NAMESPACE": "img-server"
+  "REDIS_NAMESPACE": "img-server",
+
+  // Redis lock variables
+  "LOCK_INTERVAL": 200,
+  "LOCK_WAIT_TIMEOUT": 2000
 }
