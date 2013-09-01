@@ -14,8 +14,14 @@
     "heroku",
     "optimization"
   ],
-  "author": "James Nicol",
-  "license": "BSD",
+  "author": "James Nicol <james.andrew.nicol@gmail.com> (https://github.com/jimmynicol)",
+  "license": {
+    "type": "MIT",
+    "url": "http://github.com/jimmynicol/image-resizer/raw/master/LICENSE"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "dependencies": {
     "colors": "~0.6.2",
     "gm": "~1.11.1",
