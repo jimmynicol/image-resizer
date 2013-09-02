@@ -23,36 +23,86 @@ Subsequent requests to existing image versions simply query Redis for the file a
 Unfortunately at this point `image-resizer` is only built to deal with cloud storage on AWS S3.
 
 
+## Environment Variables
+
+Configuration of `image-resizer` is done via environment variables. This is done to be compatible with Heroku deployments.
+
+To set environment variables in your [Heroku console](https://devcenter.heroku.com/articles/config-vars).
+
+    heroku config:set AWS_ACCESS_KEY_ID=abcd1234
+
+For convenience in local and non-Heroku deployments the variables can be loaded from a file (`local_environment.js`). A sample version is included in the repo.
+
+The available variables are as follows:
+
+    // AWS credentials
+    "AWS_ACCESS_KEY_ID": "",
+    "AWS_SECRET_ACCESS_KEY": "",
+    "S3_BUCKET": "",
+
+    // CDN path
+    "CDN_ROOT": "",
+
+    // Environment
+    "NODE_ENV": "development",
+
+    // Server port
+    "PORT": 5000,
+
+    // Redis connection URL (named for convenience with Heroku)
+    "REDISTOGO_URL": "redis://localhost:6379",
+
+    // Redis key namespace
+    "REDIS_NAMESPACE": "img-server",
+
+    // Redis lock variables
+    "LOCK_INTERVAL": 200,
+    "LOCK_WAIT_TIMEOUT": 2000
+
+
+## CDN
+
+If you chose to add a CDN in front of your S3 bucket, and lets be honest why would you, it is simple to add that to the `image-resizer` configuration. Simply set the CDN_ROOT environment variable and it will be included as part of the image path returned with the 302 headers.
+
+
 ## Usage
 `https://images.example.com/:s3_bucket_path?:dimensions`
 
-Call the service via its image id, with a dimensions query string.
+Call the service via its bucket page, with a dimensions query string.
 
 Current options
 
-*  (s|square): `s=300`
-*  (w|width):  `w=300`
-*  (h|height): `h=300`
-*  (c|crop): `c=100,200,50,50` which maps to width,height,cropx,cropy
+*  `s` or `square`: `s=300`
+*  `w` or `width`:  `w=300`
+*  `h` or `height`: `h=300`
+*  `c` or `crop`:   `c=100,200,50,50` which maps to width,height,cropx,cropy
 
 Extra options are:
 
 * `?flush` to clear out the record and overwrite
 * `?json` to return the image metadata as JSON
 
+Examples:
+
+* `https://images.example.com/test/image.png?square=50`
+* `https://images.example.com/test/image.png?h=50`
+* `https://images.example.com/test/image.png?h=50&w=100`
+* `https://images.example.com/test/image.png?crop=100,200,50,50`
+* `https://images.example.com/test/image.png?json`
+
 
 ## Heroku Deployment
 
-Included are both a `.buildpacks` file and a `Procfile` ready for Heroku deployment. The following instruction for loading the needed buildpacks is copied from [here](https://github.com/mcollina/heroku-buildpack-graphicsmagick)
+Included are both a `.buildpacks` file and a `Procfile` ready for Heroku deployment. Run the following cmd in your Heroku console to enable the correct buildpacks (copied from [here](https://github.com/mcollina/heroku-buildpack-graphicsmagick)).
 
-`heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi`
+    heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi
 
 The `.buildpacks` file will then take care of the installation process.
 
 
 ## Local development
 
-To run `image-resizer` locally, the following will work for an OSX environment assuming you have node/npm installed [NVM is useful](https://github.com/creationix/nvm).
+To run `image-resizer` locally, the following will work for an OSX environment assuming you have node/npm installed - [NVM is useful](https://github.com/creationix/nvm).
 
     npm install grunt-cli -g
     npm install nodemon -g
