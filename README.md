@@ -1,6 +1,6 @@
 # Image-Resizer
 
-`image-resizer` is a node application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
+`image-resizer` is a [Node.js](http://nodejs.org) application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
 It was built to abstract the need to set image dimensions during the upload and storage phase of modern web applications. Faffing around with CarrierWave and Paperclip (while great resources) got to be troublesome and the need for resizing images on-the-fly arose.
 
@@ -62,13 +62,13 @@ The available variables are as follows:
 
 ## CDN
 
-If you chose to add a CDN in front of your S3 bucket, and lets be honest why would you, it is simple to add that to the `image-resizer` configuration. Simply set the CDN_ROOT environment variable and it will be included as part of the image path returned with the 302 headers.
+If you chose to add a CDN in front of your S3 bucket, and lets be honest why wouldn't you, it is simple to add that to the `image-resizer` configuration. Simply set the CDN_ROOT environment variable and it will be included as part of the image path returned with the 302 headers.
 
 
 ## Usage
 `https://images.example.com/:s3_bucket_path?:dimensions`
 
-Call the service via its bucket page, with a dimensions query string.
+Call the service via its bucket path, with a dimensions query string.
 
 Current options
 
@@ -91,6 +91,10 @@ Examples:
 * `https://images.example.com/test/image.png?json`
 
 
+## Resizing Logic
+
+
+
 ## Heroku Deployment
 
 Included are both a `.buildpacks` file and a `Procfile` ready for Heroku deployment. Run the following cmd in your Heroku console to enable the correct buildpacks (copied from [here](https://github.com/mcollina/heroku-buildpack-graphicsmagick)).
@@ -105,8 +109,12 @@ The `.buildpacks` file will then take care of the installation process.
 To run `image-resizer` locally, the following will work for an OSX environment assuming you have node/npm installed - [NVM is useful](https://github.com/creationix/nvm).
 
     npm install grunt-cli -g
-    npm install nodemon -g
     brew install graphicsmagick
     npm install
     grunt
-    nodemon
+
+There are many ways to run the app locally:
+
+`nodemon` - a great choice that restarts with code changes
+`foreman start` - good for running the app how Heroku does
+`node index.js` - old skool
