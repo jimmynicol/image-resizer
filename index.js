@@ -168,6 +168,16 @@ server.listen(port);
 
 console.log(
   '\n✈',
-  ' Server started on port:'.cyan,
-  ('' + port + '\n').bold.cyan
+  'image-resizer'.bold.cyan,
+  'started!'
+);
+
+console.log(
+  'port:',
+  ('' + port).bold.cyan
+);
+
+console.log(
+  'environment:',
+  ('' + env + '\n').bold.cyan
 );
