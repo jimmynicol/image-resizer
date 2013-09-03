@@ -2,7 +2,7 @@
 
 `image-resizer` is a [Node.js](http://nodejs.org) application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
-Originally conceived as a side-project, and rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web applications. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
+Originally conceived as a side-project then rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web applications. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
 
 A version of `image-resizer` has been running succesfully in production since
 June 2013 and is handling all user generated images for [Fundly](http://fundly.com) in both the desktop and mobile optimised sites.
@@ -134,13 +134,13 @@ To run `image-resizer` locally, the following will work for an OSX environment a
 
 There are many ways to run the app locally:
 
-`nodemon` - a great choice that restarts with code changes
-`foreman start` - good for running the app how Heroku does
-`node index.js` - old skool
+* `nodemon` - a great choice that restarts with code changes
+* `foreman start` - good for running the app how Heroku does
+* `node index.js` - old skool
 
 
 ## Roadmap
 
 * better test coverage
-* add multi-vendor cloud support with something like [pkcloud](https://github.com/nodejitsu/pkgcloud)
+* add multi-vendor cloud support with something like [pkgcloud](https://github.com/nodejitsu/pkgcloud)
 * add non-Heroku deployment strategies (the [Fundly](http://fundly.com) production deployment is on s3).
