@@ -33,11 +33,11 @@ To set environment variables in your [Heroku console](https://devcenter.heroku.c
 
 For Heroku deployment the minimum required variables are:
 
-* AWS_ACCESS_KEY_ID
-* AWS_SECRET_ACCESS_KEY
-* S3_BUCKET
-* NODE_ENV
-* REDISTOGO_URL
+    AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY
+    S3_BUCKET
+    NODE_ENV
+    REDISTOGO_URL
 
 For convenience in local and non-Heroku deployments the variables can be loaded from a file (`local_environment.js`). A sample version is included in the repo.
 
@@ -74,7 +74,8 @@ If you chose to add a CDN in front of your S3 bucket, and lets be honest why wou
 
 
 ## Usage
-`https://images.example.com/:s3_bucket_path?:dimensions`
+
+`http://images.example.com/:s3_bucket_path?:dimensions`
 
 Call the service via its bucket path, with a dimensions query string.
 
@@ -92,11 +93,11 @@ Extra options are:
 
 Examples:
 
-* `https://images.example.com/test/image.png?square=50`
-* `https://images.example.com/test/image.png?h=50`
-* `https://images.example.com/test/image.png?h=50&w=100`
-* `https://images.example.com/test/image.png?crop=100,200,50,50`
-* `https://images.example.com/test/image.png?json`
+* `http://images.example.com/test/image.png?square=50`
+* `http://images.example.com/test/image.png?h=50`
+* `http://images.example.com/test/image.png?h=50&w=100`
+* `http://images.example.com/test/image.png?crop=100,200,50,50`
+* `http://images.example.com/test/image.png?json`
 
 
 ## Resizing Logic
