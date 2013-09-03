@@ -2,10 +2,10 @@
 
 `image-resizer` is a [Node.js](http://nodejs.org) application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
-Originally conceived as a side-project then rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web applications. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
+Originally conceived as a side-project then rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web application. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
 
 A version of `image-resizer` has been running succesfully in production since
-June 2013 and is handling all user generated images for [Fundly](http://fundly.com) in both the desktop and mobile optimised sites.
+June 2013 and is handling all user-generated images for [Fundly](http://fundly.com) in both the desktop and mobile-optimised sites.
 
 
 ## Overview
@@ -73,7 +73,7 @@ The available variables are as follows:
 
 ## CDN
 
-If you chose to add a CDN in front of your S3 bucket, and lets be honest why wouldn't you, it is simple to add that to the `image-resizer` configuration. Simply set the CDN_ROOT environment variable and it will be included as part of the image path returned with the 302 headers.
+If you chose to add a CDN in front of your S3 bucket (and let's be honest, why wouldn't you?) it is simple to add that to the `image-resizer` configuration. Simply set the CDN_ROOT environment variable and it will be included as part of the image path returned with the 302 headers.
 
 
 ## Usage
