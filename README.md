@@ -2,7 +2,7 @@
 
 `image-resizer` is a [Node.js](http://nodejs.org) application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
-It was built to abstract the need to set image dimensions during the upload and storage phase of modern web applications. Faffing around with CarrierWave and Paperclip (while great resources) got to be troublesome and the need for resizing images on-the-fly arose.
+It was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web applications. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
 
 
 ## Overview
@@ -30,6 +30,14 @@ Configuration of `image-resizer` is done via environment variables. This is done
 To set environment variables in your [Heroku console](https://devcenter.heroku.com/articles/config-vars).
 
     heroku config:set AWS_ACCESS_KEY_ID=abcd1234
+
+For Heroku deployment the minimum required variables are:
+
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY
+* S3_BUCKET
+* NODE_ENV
+* REDISTOGO_URL
 
 For convenience in local and non-Heroku deployments the variables can be loaded from a file (`local_environment.js`). A sample version is included in the repo.
 
@@ -93,6 +101,11 @@ Examples:
 
 ## Resizing Logic
 
+For a simple resize operation (eg: `?h=300`) then only caveat is that no operation can make an image dimension larger (we are all about keeping the image looking good).
+
+For requests for square images the logic goes that the smallest dimension is used to resize the image then the cropping removes the excess in the other direction. So an 200x300 image requested to be a 50x50 square will resize in the width to 50 and crop the excess of the height around the center. Vice versa for landscape aspects.
+
+There is no implicit logic for cropping, it merely follows the directions.
 
 
 ## Heroku Deployment
@@ -102,6 +115,8 @@ Included are both a `.buildpacks` file and a `Procfile` ready for Heroku deploym
     heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi
 
 The `.buildpacks` file will then take care of the installation process.
+
+As mentioned above there is a minimum set of config vars that need to be set before `image-resizer` runs correctly.
 
 
 ## Local development
