@@ -102,11 +102,11 @@ server = http.createServer(function(request, response) {
 
   case '/health':
     redis.ping()
-      .done(function() {
-        responses.response200(response, log, 'Success!');
-      })
       .catch(function(err) {
         responses.response500(response, log, err.message);
+      })
+      .done(function() {
+        responses.response200(response, log, 'Success!');
       });
     break;
 
