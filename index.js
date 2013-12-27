@@ -76,6 +76,7 @@ server = http.createServer(function(request, response) {
 
           img.generateVersion()
             .catch(function(err) {
+              log.log(err);
               responses.response500(response, log, err.message);
             })
             .finally(function() {
@@ -117,7 +118,7 @@ server = http.createServer(function(request, response) {
     // check to see if the extension is in the valid list
     if (!img.validExtension()) {
       log.log('Unknown file extension:', img.ext);
-      return responses.responses500(response, log, null);
+      return responses.response500(response, log, null);
     }
 
     // if this is a request for the exif metadata in JSON format
