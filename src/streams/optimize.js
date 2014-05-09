@@ -26,15 +26,16 @@ module.exports = function(){
       throw 'image needs to be a stream';
     }
 
+
     switch(image.format){
 
     case 'png':
+      image.log.time('optimize:png');
+
       var Optipng = require('optipng');
 
       options = [];
       options.push('-o' + image.modifiers.optimization);
-
-      image.log.log('optimize png');
 
       optimizer = new Optipng(options);
       image.contents = image.contents.pipe(optimizer);
@@ -47,11 +48,10 @@ module.exports = function(){
 
       bufs = [];
       image.contents.on('data', function(data){
-        image.log.log('png data');
         bufs.push(data);
       });
       image.contents.on('end', function(){
-        image.log.log('png end');
+        image.log.timeEnd('optimize:png');
         image.contents = Buffer.concat(bufs);
         callback(null, image);
       });
@@ -60,14 +60,14 @@ module.exports = function(){
 
     case 'jpg':
     case 'jpeg':
+      image.log.time('optimize:jpeg');
+
       var Jpegtran = require('jpegtran');
 
       options = [];
       if (env.JPEG_PROGRESSIVE === 'true'){
         options.push('-progressive');
       }
-
-      image.log.log('optimize: jpeg');
 
       optimizer = new Jpegtran(options);
       image.contents = image.contents.pipe(optimizer);
@@ -82,6 +82,7 @@ module.exports = function(){
         bufs.push(data);
       });
       image.contents.on('end', function(){
+        image.log.timeEnd('optimize:jpeg');
         image.contents = Buffer.concat(bufs);
         callback(null, image);
       });

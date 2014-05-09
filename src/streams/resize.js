@@ -18,7 +18,7 @@ module.exports = function(){
 
     // let this pass through if we are requesting the metadata as JSON
     if (image.modifiers.action === 'json'){
-      image.log.log('resize: no resize, json metadata call');
+      image.log.log('no resize, json metadata call');
       return callback(null, image);
     }
 
@@ -34,7 +34,6 @@ module.exports = function(){
     };
 
     image.log.time('resize');
-    image.log.log('resize:', image.modifiers);
 
     // create the gm stream
     var r = gm(image.contents, image.format);
