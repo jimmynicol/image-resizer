@@ -2,7 +2,7 @@
 
 var _         = require('lodash'),
     Logger    = require('./utils/logger'),
-    env       = process.env.NODE_ENV || 'development',
+    env       = require('./config/environment_vars'),
     modifiers = require('./lib/modifiers');
 
 
@@ -90,29 +90,25 @@ Image.prototype.isBuffer = function(){
 
 
 Image.prototype.getFile = function(){
-  var Stream;
+  var sources = require('./streams/sources'),
+      Stream = null;
+
+  console.log(sources);
 
   if (_.has(this.modifiers, 'external')){
-    switch(this.modifiers.external){
-    case 'facebook':
-      Stream = require('./streams/facebook');
-      break;
-    case 'twitter':
-      Stream = require('./streams/twitter');
-      break;
-    case 'vimeo':
-      Stream = require('./streams/vimeo');
-      break;
-    case 'youtube':
-      Stream = require('./streams/youtube');
-      break;
+    if (_.has(sources, this.modifiers.external)){
+      Stream = sources[this.modifiers.external];
     }
-  } else {
-    if (env === 'development' && _.has(this.queryString, 'local')){
-      Stream = require('./streams/fileSystem');
-    } else {
-      Stream = require('./streams/s3');
+  }
+
+  if (env.NODE_ENV === 'development'){
+    if (_.has(this.queryString, 'local')){
+      Stream = sources.fileSystem;
     }
+  }
+
+  if (Stream === null) {
+    Stream = sources.s3;
   }
 
   this.log.log('new stream created!');

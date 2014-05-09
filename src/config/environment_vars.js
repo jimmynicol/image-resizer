@@ -21,6 +21,7 @@ vars = {
 
   // Optimization options
   JPEG_PROGRESSIVE: 'true',
+  OPTIMIZATION_LEVEL: 2,
 
   // Cache expiries
   IMAGE_EXPIRY: 60 * 60 * 24 * 30,

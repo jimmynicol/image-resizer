@@ -48,6 +48,7 @@ Crop modifiers:
 
 var _ = require('lodash'),
     string = require('../utils/string'),
+    env = require('../config/environment_vars'),
     modifierMap, modKeys;
 
 
@@ -96,19 +97,20 @@ modifierMap = [
     desc: 'external',
     type: 'string',
     values: ['facebook', 'twitter', 'vimeo', 'youtube']
+  },
+  {
+    key: 'f',
+    desc: 'filter',
+    type: 'string',
+    values: ['sepia']
+  },
+  {
+    key: 'o',
+    desc: 'optimization',
+    type: 'integer',
+    values: [1,2,3,4,5,6,7],
+    default: env.OPTIMIZATION_LEVEL
   }
-  // {
-  //   key: 'f',
-  //   desc: 'filter',
-  //   type: 'string',
-  //   values: ['sepia']
-  // },
-  // {
-  //   key: 'o',
-  //   desc: 'optimization',
-  //   type: 'integer',
-  //   default: 2
-  // }
 ];
 
 exports.map = modifierMap;
@@ -138,10 +140,11 @@ exports.mod = getModifier;
 
 
 exports.parse = function(requestUrl){
-  var segments, mods, image, key, value, mod, gravity, crop;
+  var segments, mods, image, key, value, mod, gravity, crop, optimization;
 
   gravity = getModifier('g');
   crop = getModifier('c');
+  optimization = getModifier('o');
 
   segments = requestUrl.replace(/^\//,'').split('/');
   image = _.last(segments).toLowerCase();
@@ -152,7 +155,8 @@ exports.parse = function(requestUrl){
     height: null,
     width: null,
     gravity: gravity.default,
-    crop: crop.default
+    crop: crop.default,
+    optimization: optimization.default
   };
 
   _.each(_.first(segments).split('-'), function(item){
@@ -191,6 +195,12 @@ exports.parse = function(requestUrl){
         value = string.sanitize(value, 'alpha');
         if (inArray(value.toLowerCase(), mod.values)){
           mods.crop = value.toLowerCase();
+        }
+        break;
+      case 'optimization':
+        value = string.sanitize(value);
+        if (inArray(value.toLowerCase(), mod.values)){
+          mods.optimization = value.toLowerCase();
         }
         break;
       case 'external':

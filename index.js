@@ -21,13 +21,15 @@ app.get('/modifiers.json', function(request, response){
 
 
 /**
-Show a test page when in dev mode
+Some helper endpoints when in development
 */
 if (env.NODE_ENV === 'development'){
+  // Show a test page of the image options
   app.get('/test-page', function(request, response){
     response.render('index.html');
   });
 
+  // Show the environment variables and their current values
   app.get('/env', function(request, response){
     response.json(200, env);
   });
