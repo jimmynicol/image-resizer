@@ -93,8 +93,6 @@ Image.prototype.getFile = function(){
   var sources = require('./streams/sources'),
       Stream = null;
 
-  console.log(sources);
-
   if (_.has(this.modifiers, 'external')){
     if (_.has(sources, this.modifiers.external)){
       Stream = sources[this.modifiers.external];

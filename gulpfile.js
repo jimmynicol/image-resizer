@@ -59,6 +59,7 @@ function env(){
     _.extend(config, dotenv.parse(file));
   }
 
+  // print out the env vars
   _.each(config, function(value, key){
     util.log('Env:', key, util.colors.cyan(value));
   });
