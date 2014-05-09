@@ -1,13 +1,10 @@
 'use strict';
 
 
-var map, optimizer, options, bufs, config;
+var env, map, optimizer, options, bufs;
 
+env = require('../config/environment_vars');
 map = require('map-stream');
-config = {
-  png:  { optimizationLevel: process.env.PNG_OPTIMIZATION_LEVEL || 2 },
-  jpeg: { progressive: process.env.JPEG_PROGRESSIVE || true }
-};
 
 
 module.exports = function(){
@@ -35,9 +32,9 @@ module.exports = function(){
       var Optipng = require('optipng');
 
       options = [];
-      options.push('-o' + config.png.optimizationLevel);
+      options.push('-o' + image.modifiers.optimization);
 
-      image.log.log('optimize png: options', options);
+      image.log.log('optimize png');
 
       optimizer = new Optipng(options);
       image.contents = image.contents.pipe(optimizer);
@@ -66,11 +63,11 @@ module.exports = function(){
       var Jpegtran = require('jpegtran');
 
       options = [];
-      if (config.jpeg.progressive){
+      if (env.JPEG_PROGRESSIVE === 'true'){
         options.push('-progressive');
       }
 
-      image.log.log('optimize: jpeg - options', options);
+      image.log.log('optimize: jpeg');
 
       optimizer = new Jpegtran(options);
       image.contents = image.contents.pipe(optimizer);

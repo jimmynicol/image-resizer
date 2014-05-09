@@ -2,7 +2,7 @@
 
 var env, s3, stream, util, client, bucket;
 
-env    = require('../config/environment_vars');
+env    = require('../../config/environment_vars');
 s3     = require('aws-sdk').S3;
 stream = require('stream');
 util   = require('util');
