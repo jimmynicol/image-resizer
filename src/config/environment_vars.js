@@ -25,11 +25,15 @@ vars = {
 
   // Cache expiries
   IMAGE_EXPIRY: 60 * 60 * 24 * 30,
+  SOCIAL_IMAGE_EXPIRY: 60 * 60 * 24 * 2,
   JSON_EXPIRY: 60 * 60 * 24 * 30,
 
   // Logging options
   LOG_PREFIX: 'resizer',
-  QUEUE_LOG: 'true'
+  QUEUE_LOG: 'true',
+
+  // Response settings
+  CACHE_DEV_REQUESTS: 'false'
 
 };
 
