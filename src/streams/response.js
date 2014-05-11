@@ -1,8 +1,11 @@
 'use strict';
 
-var stream = require('stream'),
-    util = require('util'),
-    maxAge = 60 * 60 * 24 * 30; // 1 month
+var stream, env, util, maxAge;
+
+stream = require('stream');
+env    = require('../config/environment_vars');
+util   = require('util');
+maxAge = 60 * 60 * 24 * 30; // 1 month
 
 
 function ResponseWriter(request, response){
@@ -27,6 +30,20 @@ ResponseWriter.prototype.expiresIn = function(maxAge){
 };
 
 
+ResponseWriter.prototype.shouldCacheResponse = function(){
+
+  if (env.NODE_ENV === 'development'){
+    if (env.CACHE_DEV_REQUESTS !== 'false'){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+
 ResponseWriter.prototype._write = function(image){
   if (image.isError()){
     var statusCode = image.error.statusCode || 500;
@@ -37,12 +54,14 @@ ResponseWriter.prototype._write = function(image){
   }
 
   if (image.modifiers.action === 'json'){
-    this.response.set({
-      'Cache-Control':  'public',
-      'Expires':        this.expiresIn(maxAge),
-      'Last-Modified':  (new Date(0)).toGMTString(),
-      'Vary':           'Accept-Encoding'
-    });
+    if (this.shouldCacheResponse()){
+      this.response.set({
+        'Cache-Control':  'public',
+        'Expires':        this.expiresIn(env.JSON_EXPIRY),
+        'Last-Modified':  (new Date(0)).toGMTString(),
+        'Vary':           'Accept-Encoding'
+      });
+    }
 
     this.response.json(200, image.contents);
     image.log.flush();
@@ -50,17 +69,14 @@ ResponseWriter.prototype._write = function(image){
     return this.end();
   }
 
-  this.response.set({
-    'Cache-Control':  'public',
-    'Expires':        this.expiresIn(maxAge),
-    'Last-Modified':  (new Date(0)).toGMTString(),
-    'Vary':           'Accept-Encoding'
-  });
-
-  image.log.log(
-    'original image size:',
-    image.log.colors.grey((image.originalContentLength/1000).toString() + 'kb')
-  );
+  if (this.shouldCacheResponse()){
+    this.response.set({
+      'Cache-Control':  'public',
+      'Expires':        this.expiresIn(env.IMAGE_EXPIRY),
+      'Last-Modified':  (new Date(0)).toGMTString(),
+      'Vary':           'Accept-Encoding'
+    });
+  }
 
   this.response.type(image.format);
 
@@ -70,6 +86,12 @@ ResponseWriter.prototype._write = function(image){
   }
 
   else {
+    image.log.log(
+      'original image size:',
+      image.log.colors.grey(
+        (image.originalContentLength/1000).toString() + 'kb'
+      )
+    );
     image.log.log(
       'reduction:',
       image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
