@@ -96,7 +96,7 @@ modifierMap = [
     key: 'e',
     desc: 'external',
     type: 'string',
-    values: ['facebook', 'twitter', 'vimeo', 'youtube']
+    values: ['local', 'facebook', 'twitter', 'vimeo', 'youtube']
   },
   {
     key: 'f',

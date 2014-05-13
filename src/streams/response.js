@@ -8,6 +8,9 @@ util   = require('util');
 maxAge = 60 * 60 * 24 * 30; // 1 month
 
 
+var crypto = require('crypto');
+
+
 function ResponseWriter(request, response){
   if (!(this instanceof ResponseWriter)){
     return new ResponseWriter(request, response);
@@ -96,6 +99,10 @@ ResponseWriter.prototype._write = function(image){
       'reduction:',
       image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
     );
+
+    var shasum = crypto.createHash('sha1');
+    shasum.update(image.contents);
+    image.log.log('checksum', shasum.digest('hex'));
 
     this.response.send(200, image.contents);
     image.log.flush();

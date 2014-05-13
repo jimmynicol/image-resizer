@@ -5,10 +5,10 @@ var fs = require('fs'),
     util = require('util');
 
 
-function fileSystem(image){
+function Local(image){
   /* jshint validthis:true */
-  if (!(this instanceof fileSystem)){
-    return new fileSystem(image);
+  if (!(this instanceof Local)){
+    return new Local(image);
   }
   stream.Readable.call(this, { objectMode : true });
   this.image = image;
@@ -16,9 +16,9 @@ function fileSystem(image){
   this.ended = false;
 }
 
-util.inherits(fileSystem, stream.Readable);
+util.inherits(Local, stream.Readable);
 
-fileSystem.prototype._read = function(){
+Local.prototype._read = function(){
   var _this = this;
 
   if ( this.ended ){ return; }
@@ -30,10 +30,10 @@ fileSystem.prototype._read = function(){
     return this.push(null);
   }
 
-  this.image.log.time('fileSystem');
+  this.image.log.time('local filesystem');
 
   fs.readFile(this.filePath, function(err, data){
-    _this.image.log.timeEnd('fileSystem');
+    _this.image.log.timeEnd('local filesystem');
 
     // if there is an error store it on the image object and pass it along
     if (err) {
@@ -53,4 +53,4 @@ fileSystem.prototype._read = function(){
 };
 
 
-module.exports = fileSystem;
+module.exports = Local;
