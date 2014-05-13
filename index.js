@@ -48,7 +48,7 @@ app.get('/:modifiers/*?', function(request, response){
   image.getFile()
     .pipe(new streams.identify())
     .pipe(new streams.resize())
-    .pipe(new streams.optimize())
+    // .pipe(new streams.optimize())
     .pipe(streams.response(request, response));
 });
 

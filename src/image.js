@@ -2,7 +2,7 @@
 
 var _         = require('lodash'),
     Logger    = require('./utils/logger'),
-    env       = require('./config/environment_vars'),
+    // env       = require('./config/environment_vars'),
     modifiers = require('./lib/modifiers');
 
 
@@ -46,9 +46,13 @@ Image.validFormats = ['jpeg', 'jpg', 'gif', 'png', 'webp'];
 
 // Determine the name and format of the requested image
 Image.prototype.parseImage = function(request){
-  var img = _.last(request.path.split('/'));
-  this.image = img.split('.').slice(0,2).join('.');
-  this.format = img.split('.')[1];
+  var imgArr = _.last(request.path.split('/')).split('.'),
+      imgName = imgArr[0];
+
+  imgName = imgName.replace(/-.*/, '');
+
+  this.format = imgArr[1];
+  this.image = [imgName, this.format].join('.');
 };
 
 
@@ -99,11 +103,11 @@ Image.prototype.getFile = function(){
     }
   }
 
-  if (env.NODE_ENV === 'development'){
-    if (_.has(this.queryString, 'local')){
-      Stream = sources.fileSystem;
-    }
-  }
+  // if (env.NODE_ENV === 'development'){
+  //   if (_.has(this.queryString, 'local')){
+  //     Stream = sources.fileSystem;
+  //   }
+  // }
 
   if (Stream === null) {
     Stream = sources.s3;
