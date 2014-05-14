@@ -1,11 +1,45 @@
 'use strict';
 
 
-var env, map, optimizer, options, bufs;
+var env, map, Imagemin, concat; //, optimizer, options, bufs;
 
-env = require('../config/environment_vars');
-map = require('map-stream');
+env      = require('../config/environment_vars');
+map      = require('map-stream');
+Imagemin = require('imagemin');
+concat   = require('concat-stream');
 
+function optimize(image, callback){
+  var imgmin;
+
+  imgmin = new Imagemin()
+    .src(image.contents)
+    .use(Imagemin.gifsicle(env.GIF_INTERLACED))
+    .use(Imagemin.jpegtran(env.JPEG_PROGRESSIVE))
+    .use(Imagemin.optipng(env.PNG_OPTIMIZATION));
+
+  image.log.time('optimize:' + image.format);
+
+  imgmin.optimize(function(err, data){
+    image.log.timeEnd('optimize:' + image.format);
+
+    if (err){
+      image.log.error('optimize error', err);
+      image.error = new Error(err);
+      callback(null, image);
+    } else {
+      var saved = image.contents.length - data.contents.length;
+
+      image.log.log(
+        'optimize reduction:',
+        image.log.colors.grey(saved.toString() + 'kb')
+      );
+
+      image.contents = data.contents;
+
+      callback(null, image);
+    }
+  });
+}
 
 module.exports = function(){
 
@@ -22,79 +56,25 @@ module.exports = function(){
       return callback(null, image);
     }
 
-    if (!image.isStream()){
-      throw 'image needs to be a stream';
+    // if the incoming image contents are a stream we need to concat them into
+    // a buffer to pass to the optimizer
+    if (image.isStream()){
+      var buffer = concat(function(data){
+        image.contents = data;
+        optimize(image, callback);
+      });
+      image.contents.pipe(buffer);
     }
 
+    // if the image is a buffer then just pass it through
+    else if (image.isBuffer()) {
+      optimize(image, callback);
+    }
 
-    switch(image.format){
-
-    case 'png':
-      image.log.time('optimize:png');
-
-      var Optipng = require('optipng');
-
-      options = [];
-      options.push('-o' + image.modifiers.optimization);
-
-      optimizer = new Optipng(options);
-      image.contents = image.contents.pipe(optimizer);
-
-      image.contents.on('error', function(err){
-        image.log.error('png optimize error', err);
-        image.error = new Error(err);
-        callback(null, image);
-      });
-
-      bufs = [];
-      image.contents.on('data', function(data){
-        bufs.push(data);
-      });
-      image.contents.on('end', function(){
-        image.log.timeEnd('optimize:png');
-        image.contents = Buffer.concat(bufs);
-        callback(null, image);
-      });
-
-      break;
-
-    case 'jpg':
-    case 'jpeg':
-      image.log.time('optimize:jpeg');
-
-      var Jpegtran = require('jpegtran');
-
-      options = [];
-      if (env.JPEG_PROGRESSIVE === 'true'){
-        options.push('-progressive');
-      }
-
-      optimizer = new Jpegtran(options);
-      image.contents = image.contents.pipe(optimizer);
-
-      image.contents.on('error', function(err){
-        image.error = new Error(err);
-        image.log.error('jpeg optimize error', err);
-      });
-
-      bufs = [];
-      image.contents.on('data', function(data){
-        bufs.push(data);
-      });
-      image.contents.on('end', function(){
-        image.log.timeEnd('optimize:jpeg');
-        image.contents = Buffer.concat(bufs);
-        callback(null, image);
-      });
-
-      break;
-
-    // TODO: add some gif optimisation
-
-    default:
+    else {
+      image.log.error('optimize error', 'image is neither stream or buffer');
+      image.error = new Error('image is neither stream or buffer');
       callback(null, image);
-      break;
-
     }
 
   });
