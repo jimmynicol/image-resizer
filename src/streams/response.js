@@ -8,9 +8,6 @@ util   = require('util');
 maxAge = 60 * 60 * 24 * 30; // 1 month
 
 
-var crypto = require('crypto');
-
-
 function ResponseWriter(request, response){
   if (!(this instanceof ResponseWriter)){
     return new ResponseWriter(request, response);
@@ -35,7 +32,7 @@ ResponseWriter.prototype.expiresIn = function(maxAge){
 
 ResponseWriter.prototype.shouldCacheResponse = function(){
 
-  if (env.NODE_ENV === 'development'){
+  if (env.development){
     if (env.CACHE_DEV_REQUESTS !== 'false'){
       return true;
     } else {
@@ -85,7 +82,6 @@ ResponseWriter.prototype._write = function(image){
 
   if (image.isStream()){
     image.contents.pipe(this.response);
-    image.log.flush();
   }
 
   else {
@@ -100,16 +96,20 @@ ResponseWriter.prototype._write = function(image){
       image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
     );
 
-    var shasum = crypto.createHash('sha1');
-    shasum.update(image.contents);
-    image.log.log('checksum', shasum.digest('hex'));
+    // as a debugging step print a checksum for the modified image, so we can
+    // track to see if the image is replicated effectively between requests
+    if (env.development){
+      var crypto = require('crypto'),
+          shasum = crypto.createHash('sha1');
+      shasum.update(image.contents);
+      image.log.log('checksum', shasum.digest('hex'));
+    }
 
     this.response.send(200, image.contents);
-    image.log.flush();
-
-    this.end();
   }
 
+  image.log.flush();
+  this.end();
 };
 
 module.exports = ResponseWriter;

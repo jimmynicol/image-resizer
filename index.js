@@ -23,7 +23,7 @@ app.get('/modifiers.json', function(request, response){
 /**
 Some helper endpoints when in development
 */
-if (env.NODE_ENV === 'development'){
+if (env.development){
   // Show a test page of the image options
   app.get('/test-page', function(request, response){
     response.render('index.html');
@@ -48,7 +48,7 @@ app.get('/:modifiers/*?', function(request, response){
   image.getFile()
     .pipe(new streams.identify())
     .pipe(new streams.resize())
-    // .pipe(new streams.optimize())
+    .pipe(new streams.optimize())
     .pipe(streams.response(request, response));
 });
 
