@@ -40,7 +40,7 @@ Youtube.prototype._read = function(){
   }
 
   videoId = this.image.image.split('.')[0];
-  url = 'http://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg';
+  url = 'http://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
 
   this.image.log.time('youtube');
 
@@ -62,3 +62,8 @@ Youtube.prototype._read = function(){
 
 
 module.exports = Youtube;
+
+// http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
+
+// you can also get json data about a Youtube vid like this:
+//  - http://gdata.youtube.com/feeds/api/videos/lK1vPu6U2B0?v=2&alt=jsonc

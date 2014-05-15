@@ -6,7 +6,7 @@ path      = require('path');
 fs        = require('fs');
 cwd       = process.cwd();
 dir       = __dirname.split('/').slice(-1)[0];
-pluginDir = [cwd, dir].join('/');
+pluginDir = [cwd, 'plugins', dir].join('/');
 modules   = {};
 
 
