@@ -51,7 +51,7 @@ Twitter.prototype._read = function(){
 
   profileId = this.image.image.split('.')[0];
 
-  if (_.inNaN(profileId * 1)){
+  if (_.isNaN(profileId * 1)){
     queryString = 'screen_name=' + profileId;
   } else {
     queryString = 'user_id=' + profileId;

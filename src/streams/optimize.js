@@ -27,15 +27,7 @@ function optimize(image, callback){
       image.error = new Error(err);
       callback(null, image);
     } else {
-      var saved = image.contents.length - data.contents.length;
-
-      image.log.log(
-        'optimize reduction:',
-        image.log.colors.grey(saved.toString() + 'kb')
-      );
-
       image.contents = data.contents;
-
       callback(null, image);
     }
   });
