@@ -35,9 +35,26 @@ write(dest + '/package.json', JSON.stringify(newPkg, null, 2));
 
 // create the gulpfile
 
+// create .env
+
+// create .gitignore
+
+// create .jshintrc
+
+// create Heroku files
+//  - Procfile
+//  - .buildpacks
+
+// create plugin folders
+//  - sources
+//  - filters
 
 
 function write(path, str, mode) {
   fs.writeFile(path, str, { mode: mode || 0666 });
   console.log('  ' + chalk.green('create') + ': ' + path);
+}
+
+function copy(from, to) {
+  write(to, fs.readFileSync(from, 'utf-8'));
 }
