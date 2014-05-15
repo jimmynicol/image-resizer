@@ -38,8 +38,7 @@ util.inherits(Twitter, stream.Readable);
 
 Twitter.prototype._read = function(){
   var _this = this,
-      url, profileId, queryString,
-      imgStream,
+      profileId, queryString, imgStream,
       bufs = [];
 
   if ( this.ended ){ return; }
@@ -67,7 +66,7 @@ Twitter.prototype._read = function(){
     queryString = {user_id: profileId};
   }
 
-  t.get('users/show', queryString, function(err, data, response){
+  t.get('users/show', queryString, function(err, data){
     if (err){
       _this.image.error = new Error(err);
       endStream();
