@@ -25,30 +25,29 @@
   "dependencies": {
     "express": "~3.4.8",
     "gm": "~1.14.2",
-    "jpegtran": "0.0.4",
     "map-stream": "~0.1.0",
     "lodash": "~2.4.1",
-    "optipng": "0.0.4",
     "aws-sdk": "~2.0.0-rc9",
     "glob": "~3.2.9",
     "knox": "~0.8.9",
     "chalk": "~0.4.0",
     "request": "~2.34.0",
     "imagemin": "~0.4.6",
-    "concat-stream": "~1.4.5"
+    "concat-stream": "~1.4.5",
+    "twit": "~1.1.15"
   },
   "devDependencies": {
     "chai": "~1.9.0",
-    "sinon": "~1.8.2",
-    "sinon-chai": "~2.5.0",
-    "gulp": "~3.5.2",
-    "gulp-mocha": "~0.4.1",
-    "gulp-util": "~2.2.14",
-    "gulp-jshint": "~1.4.2",
-    "jshint-stylish": "~0.1.5",
     "connect-livereload": "~0.3.2",
-    "gulp-nodemon": "~1.0.0",
+    "dotenv": "~0.2.8",
     "ejs": "~1.0.0",
-    "dotenv": "~0.2.8"
+    "gulp": "^3.6.2",
+    "gulp-jshint": "~1.4.2",
+    "gulp-mocha": "~0.4.1",
+    "gulp-nodemon": "~1.0.0",
+    "gulp-util": "~2.2.14",
+    "jshint-stylish": "~0.1.5",
+    "sinon": "~1.8.2",
+    "sinon-chai": "~2.5.0"
   }
 }

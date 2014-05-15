@@ -15,7 +15,7 @@ chalk.enabled = true;
 function Logger(){
   this.queue = [];
   this.times = {};
-  this.queueLog = queueLog === 'true';
+  this.queueLog = queueLog;
 }
 
 Logger.prototype.colors = chalk;
@@ -44,7 +44,7 @@ Logger.prototype.time = function(key){
   if (this.queueLog){
     this.times[key] = Date.now();
   } else {
-    key = '[' + chalk.green(prefix) + '] ' + chalk.magenta(key);
+    key = '[' + chalk.green(prefix) + '] ' + chalk.cyan(key);
     console.time.call(console, key);
   }
 };
@@ -54,7 +54,7 @@ Logger.prototype.timeEnd = function(key){
     var time = Date.now() - this.times[key];
     this.queue.push({ method: 'time', key: key, time: time });
   } else {
-    key = '[' + chalk.green(prefix) + '] ' + chalk.magenta(key);
+    key = '[' + chalk.green(prefix) + '] ' + chalk.cyan(key);
     console.timeEnd.call(console, key);
   }
 };
