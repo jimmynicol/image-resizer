@@ -4,7 +4,7 @@
   "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
   "main": "index.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "gulp test"
   },
   "keywords": [
     "image",
@@ -20,7 +20,7 @@
     "url": "http://github.com/jimmynicol/image-resizer/raw/master/LICENSE"
   },
   "engines": {
-    "node": "0.10.25"
+    "node": "0.10.28"
   },
   "dependencies": {
     "express": "~3.4.8",

@@ -1,11 +1,21 @@
 'use strict';
 
-var stream, util, request, _;
+var stream, util, env, Twit, t, request, _;
 
 stream  = require('stream');
 util    = require('util');
+env     = require('../../config/environment_vars');
+Twit    = require('twit');
 request = require('request');
 _       = require('lodash');
+
+/* jshint camelcase:false */
+t = new Twit({
+  consumer_key:         env.TWITTER_CONSUMER_KEY,
+  consumer_secret:      env.TWITTER_CONSUMER_SECRET,
+  access_token:         env.TWITTER_ACCESS_TOKEN,
+  access_token_secret:  env.TWITTER_ACCESS_TOKEN_SECRET
+});
 
 
 function contentLength(bufs){
@@ -52,23 +62,21 @@ Twitter.prototype._read = function(){
   profileId = this.image.image.split('.')[0];
 
   if (_.isNaN(profileId * 1)){
-    queryString = 'screen_name=' + profileId;
+    queryString = {screen_name: profileId};
   } else {
-    queryString = 'user_id=' + profileId;
+    queryString = {user_id: profileId};
   }
 
-  url = 'https://api.twitter.com/1.1/users/show.json?' + queryString;
-
-  request(url, function(err, response, body){
+  t.get('users/show', queryString, function(err, data, response){
     if (err){
       _this.image.error = new Error(err);
       endStream();
     } else {
-      var json = JSON.parse(body);
-
       /* jshint camelcase:false */
-      var imageUrl = json[0].profile_image_url;
-      imageUrl = imageUrl.replace('_640.jpg', '');
+      var imageUrl = data.profile_image_url
+        .replace('_normal', '')
+        .replace('_bigger', '')
+        .replace('_mini', '');
 
       imgStream = request.get(imageUrl);
       imgStream.on('data', function(d){ bufs.push(d); });
