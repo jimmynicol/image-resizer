@@ -10,13 +10,13 @@ var gulp = require('gulp'),
 
 
 gulp.task('lint', function () {
-  gulp.src(['src/**/*.js', 'index.js', 'gulpfile.js'])
+  gulp.src(['plugins/**/*.js', 'index.js', 'gulpfile.js'])
     .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter(stylish));
 });
 gulp.task('lint:watch', ['lint'], function(){
   gulp.watch(
-    ['src/**/*.js'],
+    ['plugins/**/*.js'],
     function(event){
       util.log('file changed:', util.colors.green(event.path));
       gulp.src(event.path)
@@ -36,7 +36,7 @@ gulp.task('test', function () {
 });
 gulp.task('test:watch', ['lint', 'test'], function (){
   gulp.watch(
-    ['src/**/*.js', 'test/**/*.js'],
+    ['plugins/**/*.js', 'test/**/*.js'],
     ['lint', 'test']
   );
 });
@@ -67,12 +67,10 @@ function env(){
   return config;
 }
 
-// gulp.task('watch', ['lint', 'test'], function () {
-gulp.task('watch', ['lint'], function () {
+gulp.task('watch', ['lint', 'test'], function () {
   nodemon({
     script: 'index.js',
     ext: 'js html',
     env: env()
-  // }).on('restart', ['lint', 'test']);
-  }).on('restart', ['lint']);
+  }).on('restart', ['lint', 'test']);
 });
