@@ -2,7 +2,6 @@
 
 var _         = require('lodash'),
     Logger    = require('./utils/logger'),
-    // env       = require('./config/environment_vars'),
     modifiers = require('./lib/modifiers');
 
 
@@ -102,12 +101,6 @@ Image.prototype.getFile = function(){
       Stream = sources[this.modifiers.external];
     }
   }
-
-  // if (env.NODE_ENV === 'development'){
-  //   if (_.has(this.queryString, 'local')){
-  //     Stream = sources.fileSystem;
-  //   }
-  // }
 
   if (Stream === null) {
     Stream = sources.s3;

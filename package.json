@@ -19,21 +19,26 @@
     "type": "MIT",
     "url": "http://github.com/jimmynicol/image-resizer/raw/master/LICENSE"
   },
+  "bin": {
+    "image-resizer": "./bin"
+  },
   "engines": {
     "node": "0.10.28"
   },
   "dependencies": {
-    "express": "~3.4.8",
-    "gm": "~1.14.2",
-    "map-stream": "~0.1.0",
-    "lodash": "~2.4.1",
     "aws-sdk": "~2.0.0-rc9",
-    "glob": "~3.2.9",
-    "knox": "~0.8.9",
     "chalk": "~0.4.0",
-    "request": "~2.34.0",
-    "imagemin": "~0.4.6",
+    "commander": "^2.2.0",
     "concat-stream": "~1.4.5",
+    "express": "~3.4.8",
+    "glob": "~3.2.9",
+    "gm": "~1.14.2",
+    "imagemin": "~0.4.6",
+    "knox": "~0.8.9",
+    "lodash": "~2.4.1",
+    "map-stream": "~0.1.0",
+    "mkdirp": "^0.5.0",
+    "request": "~2.34.0",
     "twit": "~1.1.15"
   },
   "devDependencies": {
