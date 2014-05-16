@@ -19,25 +19,28 @@ program
   .usage('[action] [options] [dir]')
   .parse(process.argv);
 
-dest = program.args.shift() || '.';
+// dest = program.args.shift() || '.';
+dest = '.';
 appName = path.basename(path.resolve(dest));
-
-
 
 // create a new package.json
 newPkg = {
   name: appName,
   version: '0.0.1',
   dependencies: {
-    "image-resizer": "~" + pkg.version
+    "image-resizer": "~" + pkg.version,
+    "express": pkg.dependencies.express,
+    "lodash": pkg.dependencies.lodash
   },
   devDependencies: pkg.devDependencies
 };
 write(dest + '/package.json', JSON.stringify(newPkg, null, 2));
 
+// create index.js
+copy(__dirname + '/./templates/index.js.tmpl', dest + '/index.js');
 
 // create the gulpfile
-copy(__dirname + '/./templates/gulpfile.js', dest + '/gulpfile.js');
+copy(__dirname + '/./templates/gulpfile.js.tmpl', dest + '/gulpfile.js');
 
 // create .env
 copy(__dirname + '/./templates/.env.tmpl', dest + '/.env');
@@ -63,7 +66,7 @@ mkdir(dest + '/plugins/filters');
 
 function write(path, str, mode) {
   fs.writeFile(path, str, { mode: mode || '0666' });
-  console.log('  ' + chalk.green('create') + ': ' + path);
+  console.log('    ' + chalk.green('create') + ': ' + path);
 }
 
 function copy(from, to) {
@@ -75,7 +78,7 @@ function mkdir(path, fn) {
     if (err) {
       throw err;
     }
-    console.log('   ' + chalk.green + ' : ' + path);
+    console.log('    ' + chalk.green('create') + ' : ' + path);
     fn && fn();
   });
 }

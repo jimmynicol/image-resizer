@@ -10,12 +10,16 @@ request = require('request');
 _       = require('lodash');
 
 /* jshint camelcase:false */
-t = new Twit({
-  consumer_key:         env.TWITTER_CONSUMER_KEY,
-  consumer_secret:      env.TWITTER_CONSUMER_SECRET,
-  access_token:         env.TWITTER_ACCESS_TOKEN,
-  access_token_secret:  env.TWITTER_ACCESS_TOKEN_SECRET
-});
+try {
+  t = new Twit({
+    consumer_key:         env.TWITTER_CONSUMER_KEY,
+    consumer_secret:      env.TWITTER_CONSUMER_SECRET,
+    access_token:         env.TWITTER_ACCESS_TOKEN,
+    access_token_secret:  env.TWITTER_ACCESS_TOKEN_SECRET
+  });
+} catch(e){
+
+}
 
 
 function contentLength(bufs){
@@ -46,6 +50,13 @@ Twitter.prototype._read = function(){
   // pass through if there is an error on the image object
   if (this.image.isError()){
     this.ended = true;
+    this.push(this.image);
+    return this.push(null);
+  }
+
+  // pass through the stream with an error if the twit library didnt start
+  if (!t){
+    this.image.error = new Error('Need twitter valid twitter credentials');
     this.push(this.image);
     return this.push(null);
   }
