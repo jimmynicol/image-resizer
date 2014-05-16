@@ -16,7 +16,7 @@ gulp.task('lint', function () {
 });
 gulp.task('lint:watch', ['lint'], function(){
   gulp.watch(
-    ['plugins/**/*.js'],
+    ['plugins/**/*.js', 'index.js'],
     function(event){
       util.log('file changed:', util.colors.green(event.path));
       gulp.src(event.path)
@@ -27,18 +27,12 @@ gulp.task('lint:watch', ['lint'], function(){
 });
 
 gulp.task('test', function () {
-  gulp.src('test/**/*.js')
+  gulp.src(['node_modules/image_resizer/test/**/*.js'])
     .pipe(mocha({reporter: 'nyan'}))
     .on('error', function(err){
       console.log(err.toString());
       this.emit('end');
     });
-});
-gulp.task('test:watch', ['lint', 'test'], function (){
-  gulp.watch(
-    ['plugins/**/*.js', 'test/**/*.js'],
-    ['lint', 'test']
-  );
 });
 
 function env(){
@@ -67,10 +61,11 @@ function env(){
   return config;
 }
 
-gulp.task('watch', ['lint', 'test'], function () {
+gulp.task('watch', ['lint'], function () {
   nodemon({
     script: 'index.js',
-    ext: 'js html',
-    env: env()
-  }).on('restart', ['lint', 'test']);
+    ext: 'js',
+    env: env(),
+    ignore: ['./node_modules/**']
+  }).on('restart', ['lint']);
 });
