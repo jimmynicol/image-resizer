@@ -11,7 +11,6 @@ module.exports = function(app){
     app.set('port', process.env.PORT || 3001);
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
-    app.use(express.methodOverride());
     app.use(app.router);
     app.use(express.errorHandler());
 
