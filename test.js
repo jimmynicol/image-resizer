@@ -2,21 +2,21 @@
 
 var express = require('express'),
     app = express(),
-    env = require('./src/config/environment_vars'),
-    Img = require('./src/image'),
-    streams = require('./src/streams');
+    ir = require('./index'),
+    env = ir.env,
+    Img = ir.img,
+    streams = ir.streams;
 
 
 app.directory = __dirname;
-require('./src/config/' + env.NODE_ENV)(app);
+ir.expressConfig(app);
 
 
 /**
 Return the modifiers map as a documentation endpoint
 */
 app.get('/modifiers.json', function(request, response){
-  var modMap = require('./src/lib/modifiers').map;
-  response.json(200, modMap);
+  response.json(200, ir.modifiers);
 });
 
 
