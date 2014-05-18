@@ -1,18 +1,18 @@
 'use strict';
 
-var express = require('express');
+
+var express, morgan, errorHandler;
+
+express      = require('express');
+morgan       = require('morgan');
+errorHandler = require('errorhandler');
 
 module.exports = function(app){
-  app.configure('development', function(){
 
-    app.set('views', process.cwd() + '/test');
-    app.engine('html', require('ejs').renderFile);
+  app.set('views', process.cwd() + '/test');
+  app.engine('html', require('ejs').renderFile);
+  app.set('port', process.env.PORT || 3001);
+  app.use(morgan('dev'));
+  app.use(errorHandler());
 
-    app.set('port', process.env.PORT || 3001);
-    app.use(express.logger('dev'));
-    app.use(express.bodyParser());
-    app.use(app.router);
-    app.use(express.errorHandler());
-
-  });
 };
