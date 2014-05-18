@@ -54,7 +54,7 @@ copy(__dirname + '/../.jshintrc', dest + '/.jshintrc');
 // create Heroku files
 //  - Procfile
 //  - .buildpacks
-copy(__dirname + '/../Procfile', dest + '/Procfile');
+write (dest + '/Procfile', 'web: node index.js');
 copy(__dirname + '/../.buildpacks', dest + '/.buildpacks');
 
 // create plugin folders
