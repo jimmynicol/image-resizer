@@ -179,7 +179,13 @@ It is worthy of note that this application will not scale images up, we are all 
 
 ## S3 source
 
-By default
+By default the connected s3 source will be accessed to return the image. The full path of the image within the bucket is used, minus the bucket name, eg:
+
+    `https://s3.amazonaws.com/sample.bucket/test/image.png`
+
+translates to:
+
+    `http://my.cdn.com/test/image.png`
 
 
 ## External Sources
