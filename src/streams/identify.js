@@ -1,7 +1,9 @@
 'use strict';
 
-var gm = require('gm'),
-    map = require('map-stream');
+var gm, map;
+
+gm  = require('gm');
+map = require('map-stream');
 
 
 module.exports = function(){
@@ -9,12 +11,11 @@ module.exports = function(){
   return map( function(image, callback){
 
     if ( image.isError() ){
-      image.log.error('identify:error', image.error);
       return callback(null, image);
     }
 
     if ( image.modifiers.action !== 'json' ){
-      image.log.log('identify: no identify');
+      image.log.log('identify:', image.log.colors.bold('no identify'));
       return callback(null, image);
     }
 
@@ -24,6 +25,7 @@ module.exports = function(){
         image.log.timeEnd('identify');
 
         if (err) {
+          image.log.error('identify error', err);
           image.error = new Error(err);
         } else {
           image.contents = data;

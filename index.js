@@ -7,7 +7,7 @@ module.exports = {
   img: require('./src/image'),
   streams: require('./src/streams'),
   sources: require('./src/streams/sources'),
-  filters: require('./src/streams/filters'),
+  filter: require('./src/streams/filter'),
   modifiers: require('./src/lib/modifiers').map,
 
   env: env,

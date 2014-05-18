@@ -1,7 +1,7 @@
 'use strict';
 
 
-var env, map, Imagemin, concat; //, optimizer, options, bufs;
+var env, map, Imagemin, concat;
 
 env      = require('../config/environment_vars');
 map      = require('map-stream');
@@ -37,8 +37,8 @@ module.exports = function(){
 
   return map(function(image, callback){
 
+    // pass through if there is an error
     if (image.isError()){
-      image.log.log('optimize:error', image.error);
       return callback(null, image);
     }
 
