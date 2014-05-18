@@ -47,9 +47,11 @@ Crop modifiers:
 
 
 var _ = require('lodash'),
+    filters = require('../streams/filters'),
     string = require('../utils/string'),
-    modifierMap, modKeys;
+    filterKeys, modifierMap, modKeys;
 
+filterKeys = _.keys(filters);
 
 modifierMap = [
   {
@@ -101,7 +103,7 @@ modifierMap = [
     key: 'f',
     desc: 'filter',
     type: 'string',
-    values: ['sepia']
+    values: filterKeys
   }
 ];
 
