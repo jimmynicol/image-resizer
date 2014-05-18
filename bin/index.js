@@ -27,10 +27,14 @@ appName = path.basename(path.resolve(dest));
 newPkg = {
   name: appName,
   version: '0.0.1',
+  main: 'index.js'
+  engines: {
+    'node': pkg.engines.node
+  },
   dependencies: {
-    "image-resizer": "~" + pkg.version,
-    "express": pkg.dependencies.express,
-    "lodash": pkg.dependencies.lodash
+    'image-resizer': '~' + pkg.version,
+    'express': pkg.dependencies.express,
+    'lodash': pkg.dependencies.lodash
   },
   devDependencies: pkg.devDependencies
 };
