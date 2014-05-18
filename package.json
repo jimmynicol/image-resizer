@@ -19,6 +19,7 @@
     "type": "MIT",
     "url": "http://github.com/jimmynicol/image-resizer/raw/master/LICENSE"
   },
+  "repository": "git://github.com/jimmynicol/image-resizer",
   "bin": {
     "image-resizer": "./bin"
   },
@@ -30,7 +31,8 @@
     "chalk": "~0.4.0",
     "commander": "^2.2.0",
     "concat-stream": "~1.4.5",
-    "express": "~3.4.8",
+    "errorhandler": "^1.0.1",
+    "express": "^4.2.0",
     "glob": "~3.2.9",
     "gm": "~1.14.2",
     "imagemin": "~0.4.6",
@@ -38,7 +40,9 @@
     "lodash": "~2.4.1",
     "map-stream": "~0.1.0",
     "mkdirp": "^0.5.0",
+    "morgan": "^1.0.1",
     "request": "~2.34.0",
+    "static-favicon": "^2.0.0-alpha",
     "twit": "~1.1.15"
   },
   "devDependencies": {

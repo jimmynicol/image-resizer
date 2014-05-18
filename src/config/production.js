@@ -1,14 +1,16 @@
 'use strict';
 
-var express = require('express');
+
+var express, morgan, errorHandler;
+
+express      = require('express');
+morgan       = require('morgan');
+errorHandler = require('errorhandler');
 
 module.exports = function(app){
-  app.configure('production', function(){
 
-    app.set('port', process.env.PORT || 3001);
-    app.use(express.bodyParser());
-    app.use(app.router);
-    app.use(express.errorHandler());
+  app.set('port', process.env.PORT || 3001);
+  app.use(morgan('dev'));
+  app.use(errorHandler());
 
-  });
 };
