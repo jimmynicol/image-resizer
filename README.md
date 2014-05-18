@@ -1,22 +1,54 @@
 # Image-Resizer
 
+NOTE: Completely refactored and improved, if you are looking for the older version it is tagged as [v0.0.1](https://github.com/jimmynicol/image-resizer/tree/v0.0.1).
+
 `image-resizer` is a [Node.js](http://nodejs.org) application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
 Originally conceived as a side-project then rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web application. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
 
-A version of `image-resizer` has been running succesfully in production since
-June 2013 and is handling all user-generated images for [Fundly](http://fundly.com) in both the desktop and mobile-optimised sites.
+`image-resizer` runs all image manipulation for [Fundly.com](https://fundly.com) and any improvements made will be rolled back into this repo. An earlier version of `image-resizer` was running succesfully in production from June 2013.
 
 
 ## Overview
 
-`image-resizer` sits as a middleman between your application and your cloud storage (only S3 at this point).
+`image-resizer` sits as a custom origin behind your CDN, serving resized and optimized images from a variety of sources.
 
-When a new image size is requested `image-resizer` will pull down the original image from the cloud, resize according to the requested dimensions, then push the new image back to the cloud and store the coordinates in Redis.
+It has a plugin architecture that allows you to add your own image sources. Out of the box it supports: S3, Facebook, Twitter, Youtube, Vimeo (and local file system in development mode).
 
-Both on the initial request and subsequent ones `image-resizer` will return a cacheable 302 header with a location directive to the new home of the image.
+When a new image size is requested via the CDN `image-resizer`, as the origin point, will pull down the original image from the cloud. It will then resize according to the requested dimensions, optimize according to file type and optionally filter the image. All responses are crafted with custom responses to maximise the facility of the CDN.
 
-Subsequent requests to existing image versions simply query Redis for the file and return the 302 header, which is a very fast operation (typically < 10ms).
+The server is now based on Express 4.0 and removes the previous dependancy on Redis so it is now a standalone app that can be run on Heroku (or elsewhere) with out the need for any external services.
+
+
+## Getting Started
+
+  $ npm install -g image-resizer
+  $ mkdir my_fancy_image_server
+  $ cd my_fancy_image_server
+  $ image-resizer new
+  $ npm install
+
+This will create a new directory structure including all the necessary files needed to run `image-resizer`. The money file is `index.js` which is loads the express configuration and routes.
+
+
+## Architecture
+
+The new refactored codebase now takes advantage of node streams. The [previous iteration](https://github.com/jimmynicol/image-resizer/tree/v0.0.1) was heavily based on promises but still ended up with spaghetti code to some extent.
+
+Inspired a lot by [Gulp](http://gulpjs.com) `image-resizer` passes around an Image object between each of the streams that contains information about the request and the image data (either as a buffer or stream).
+
+Images are also no longer modified and sent back to s3 for storage. The full power of the CDN is used for storing the modified images. This greatly improves performance both on the server side and client side. Google PageSpeed did not like the 302 redirects returned by an `image-resizer` instance.
+
+Also removing the need to push data to s3 helps the server processing as this can be a wildly inconsistent action.
+
+`image-resizer` is now released as a npm package and a generate cli script will build a working server instance that can be pushed directly to Heroku.
+
+
+## Plugins
+
+`image-resizer` now supports a range of custom plugins for both image sources and filters. As mentioned above a number of sources are supported out of the box but each of these can be over written as needed.
+
+The directory structure created via `$ image-resizer new` will include a plugins directory where the initialization script will pick up any scripts and insert them into the application.
 
 
 ## Dependencies
