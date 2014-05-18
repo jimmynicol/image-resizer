@@ -115,11 +115,11 @@ The available variables are as follows:
 
 ## Optimization
 
-Optimization of images is done via [ImageMin](https://github.com/kevva/imagemin). Each image type optimizer is as follows:
+Optimization of images is done via [Imagemin](https://github.com/kevva/imagemin). Each image type optimizer is as follows:
 
-* PNG: optipng (default level of 2, configurable by `PNG_OPTIMIZATION`)
-* JPEG: jpegtran (progressive by default, `JPEG_PROGRESSIVE`)
-* GIF: gifsicle (interlaced by default, `GIF_INTERLACED)
+* *.png*:  optipng  (default level of 2, configurable by `PNG_OPTIMIZATION`)
+* *.jpeg*: jpegtran (progressive by default, `JPEG_PROGRESSIVE`)
+* *.gif*:  gifsicle (interlaced by default, `GIF_INTERLACED`)
 
 
 ## CDN
@@ -169,11 +169,17 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 * `http://my.cdn.com/h50/path/to/image.png`
 * `http://my.cdn.com/h50-w100/path/to/image.png`
 * `http://my.cdn.com/s50-gne/path/to/image.png`
+* `http://my.cdn.com/path/to/image.png` - original image request, will be optimized but not resized
 
 
 ## Resizing Logic
 
 It is worthy of note that this application will not scale images up, we are all about keeping images looking good. So a request for `h400` on an image of only 200px in height will not scale it up.
+
+
+## S3 source
+
+By default
 
 
 ## External Sources
