@@ -1,10 +1,12 @@
 'use strict';
 
-var gm = require('gm'),
-    dims = require('../lib/dimensions'),
-    map = require('map-stream'),
-    autoOrient = process.env.AUTO_ORIENT || 'true',
-    removeMetadata = process.env.REMOVE_METADATA || 'true';
+var gm, env, dims, map;
+
+gm   = require('gm');
+env  = require('../config/environment_vars');
+dims = require('../lib/dimensions');
+map  = require('map-stream');
+
 
 module.exports = function(){
 
@@ -18,13 +20,14 @@ module.exports = function(){
 
     // let this pass through if we are requesting the metadata as JSON
     if (image.modifiers.action === 'json'){
-      image.log.log('no resize, json metadata call');
+      image.log.log('resize: json metadata call');
       return callback(null, image);
     }
 
     // handle the stream response for any of the resizing actions
     var streamResponse = function(err, stdout){
       if (err) {
+        image.log.error('resize error', err);
         image.error = new Error(err);
       } else {
         image.contents = stdout;
@@ -39,12 +42,12 @@ module.exports = function(){
     var r = gm(image.contents, image.format);
 
     // auto orient the image, so it is always the correct way up
-    if (autoOrient === 'true'){
+    if (env.AUTO_ORIENT){
       r.autoOrient();
     }
 
     // remove any image metadata
-    if (removeMetadata === 'true'){
+    if (env.REMOVE_METADATA){
       r.noProfile();
     }
 

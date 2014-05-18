@@ -193,6 +193,13 @@ exports.parse = function(requestUrl){
         if (inArray(value.toLowerCase(), mod.values)){
           mods.external = value.toLowerCase();
         }
+        break;
+      case 'filter':
+        value = string.sanitize(value, 'alpha');
+        if (inArray(value.toLowerCase(), mod.values)){
+          mods.filter = value.toLowerCase();
+        }
+        break;
       }
     }
   });
