@@ -11,22 +11,20 @@ Originally conceived as a side-project then rolled back into [Fundly](http://fun
 
 ## Overview
 
-`image-resizer` sits as a custom origin behind your CDN, serving resized and optimized images from a variety of sources.
+The server is now based on Express 4.0 and removes the previous dependency on Redis so it is now a standalone app that can be run on Heroku (or elsewhere) with out the need for any external services.
 
-It has a plugin architecture that allows you to add your own image sources. Out of the box it supports: S3, Facebook, Twitter, Youtube, Vimeo (and local file system in development mode).
+`image-resizer` has added a plugin architecture that allows you to add your own image sources. Out of the box it supports: S3, Facebook, Twitter, Youtube, Vimeo (and local file system in development mode).
 
-When a new image size is requested via the CDN `image-resizer`, as the origin point, will pull down the original image from the cloud. It will then resize according to the requested dimensions, optimize according to file type and optionally filter the image. All responses are crafted with custom responses to maximise the facility of the CDN.
-
-The server is now based on Express 4.0 and removes the previous dependancy on Redis so it is now a standalone app that can be run on Heroku (or elsewhere) with out the need for any external services.
+When a new image size is requested of `image-resizer` via the CDN, it will pull down the original image from the cloud. It will then resize according to the requested dimensions, optimize according to file type and optionally filter the image. All responses are crafted with custom responses to maximise the facility of the CDN.
 
 
 ## Getting Started
 
-  $ npm install -g image-resizer
-  $ mkdir my_fancy_image_server
-  $ cd my_fancy_image_server
-  $ image-resizer new
-  $ npm install
+    $ npm install -g image-resizer
+    $ mkdir my_fancy_image_server
+    $ cd my_fancy_image_server
+    $ image-resizer new
+    $ npm install
 
 This will create a new directory structure including all the necessary files needed to run `image-resizer`. The money file is `index.js` which is loads the express configuration and routes.
 
@@ -78,41 +76,50 @@ For convenience in local and non-Heroku deployments the variables can be loaded 
 
 The available variables are as follows:
 
-  NODE_ENV: 'development',
-  PORT: 3001,
+    NODE_ENV: 'development',
+    PORT: 3001,
 
-  // AWS keys
-  AWS_ACCESS_KEY_ID: null,
-  AWS_SECRET_ACCESS_KEY: null,
-  AWS_REGION: null,
-  S3_BUCKET: null,
+    // AWS keys
+    AWS_ACCESS_KEY_ID: null,
+    AWS_SECRET_ACCESS_KEY: null,
+    AWS_REGION: null,
+    S3_BUCKET: null,
 
-  // Resize options
-  AUTO_ORIENT: true,
-  REMOVE_METADATA: true,
+    // Resize options
+    AUTO_ORIENT: true,
+    REMOVE_METADATA: true,
 
-  // Optimization options
-  JPEG_PROGRESSIVE: true,
-  PNG_OPTIMIZATION: 2,
-  GIF_INTERLACED: true,
+    // Optimization options
+    JPEG_PROGRESSIVE: true,
+    PNG_OPTIMIZATION: 2,
+    GIF_INTERLACED: true,
 
-  // Cache expiries
-  IMAGE_EXPIRY: 60 * 60 * 24 * 30,
-  SOCIAL_IMAGE_EXPIRY: 60 * 60 * 24 * 2,
-  JSON_EXPIRY: 60 * 60 * 24 * 30,
+    // Cache expiries
+    IMAGE_EXPIRY: 60 * 60 * 24 * 30,
+    SOCIAL_IMAGE_EXPIRY: 60 * 60 * 24 * 2,
+    JSON_EXPIRY: 60 * 60 * 24 * 30,
 
-  // Logging options
-  LOG_PREFIX: 'resizer',
-  QUEUE_LOG: true,
+    // Logging options
+    LOG_PREFIX: 'resizer',
+    QUEUE_LOG: true,
 
-  // Response settings
-  CACHE_DEV_REQUESTS: false,
+    // Response settings
+    CACHE_DEV_REQUESTS: false,
 
-  // Twitter settings
-  TWITTER_CONSUMER_KEY: null,
-  TWITTER_CONSUMER_SECRET: null,
-  TWITTER_ACCESS_TOKEN: null,
-  TWITTER_ACCESS_TOKEN_SECRET: null
+    // Twitter settings
+    TWITTER_CONSUMER_KEY: null,
+    TWITTER_CONSUMER_SECRET: null,
+    TWITTER_ACCESS_TOKEN: null,
+    TWITTER_ACCESS_TOKEN_SECRET: null
+
+
+## Optimization
+
+Optimization of images is done via [ImageMin](https://github.com/kevva/imagemin). Each image type optimizer is as follows:
+
+* PNG: optipng (default level of 2, configurable by `PNG_OPTIMIZATION`)
+* JPEG: jpegtran (progressive by default, `JPEG_PROGRESSIVE`)
+* GIF: gifsicle (interlaced by default, `GIF_INTERLACED)
 
 
 ## CDN
@@ -210,3 +217,5 @@ To run `image-resizer` locally, the following will work for an OSX environment a
     gulp watch
 
 The gulp setup includes nodemon which runs the app nicely, restarting between code changes. `PORT` can be set in the `.env` file if you need to run on a port other than 3001.
+
+Tests can be run with: `gulp test`
