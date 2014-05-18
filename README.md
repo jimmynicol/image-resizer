@@ -1,12 +1,12 @@
 # Image-Resizer
 
-NOTE: Completely refactored and improved, if you are looking for the older version it is tagged as [v0.0.1](https://github.com/jimmynicol/image-resizer/tree/v0.0.1).
+*NOTE:* Completely refactored and improved, if you are looking for the older version it is tagged as [v0.0.1](https://github.com/jimmynicol/image-resizer/tree/v0.0.1).
 
-`image-resizer` is a [Node.js](http://nodejs.org) application that sits as a proxy to an s3 bucket and will resize images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
+`image-resizer` is a [Node.js](http://nodejs.org) application that sits as a  custom origin to your CDN and will resize/optimise images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
 Originally conceived as a side-project then rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web application. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
 
-`image-resizer` runs all image manipulation for [Fundly.com](https://fundly.com) and any improvements made will be rolled back into this repo. An earlier version of `image-resizer` was running succesfully in production from June 2013.
+`image-resizer` will be run as service in the Fundly Heroku stack, so it will be actively improved as a result. An earlier version of `image-resizer` was running successfully in production from June 2013.
 
 
 ## Overview
@@ -30,6 +30,8 @@ The server is now based on Express 4.0 and removes the previous dependancy on Re
 
 This will create a new directory structure including all the necessary files needed to run `image-resizer`. The money file is `index.js` which is loads the express configuration and routes.
 
+`image-resizer` can also simply be added as a node_module to any project and the streams interfaces used standalone. `./test.js` has a good example of how the app should work running behind Express.
+
 
 ## Architecture
 
@@ -41,7 +43,7 @@ Images are also no longer modified and sent back to s3 for storage. The full pow
 
 Also removing the need to push data to s3 helps the server processing as this can be a wildly inconsistent action.
 
-`image-resizer` is now released as a npm package and a generate cli script will build a working server instance that can be pushed directly to Heroku.
+`image-resizer` is now released as a npm package and a cli script can build a working server instance that can be pushed directly to Heroku.
 
 
 ## Plugins
@@ -53,9 +55,7 @@ The directory structure created via `$ image-resizer new` will include a plugins
 
 ## Dependencies
 
-`image-resizer` only requires a working node/npm environment, `graphicsmagick` and access to a Redis DB. Currently the application is setup as a Heroku/RedisToGo stack but can just as easily be deployed to AWS or other cloud provider.
-
-Unfortunately at this point `image-resizer` is only built to deal with cloud storage on AWS S3.
+`image-resizer` only requires a working node/npm environment and `graphicsmagick`. The necessary buildpack information to load your Heroku environment is included.
 
 
 ## Environment Variables
@@ -70,78 +70,123 @@ For Heroku deployment the minimum required variables are:
 
     AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY
+    AWS_REGION
     S3_BUCKET
     NODE_ENV
-    REDISTOGO_URL
 
-For convenience in local and non-Heroku deployments the variables can be loaded from a file (`local_environment.js`). A sample version is included in the repo.
+For convenience in local and non-Heroku deployments the variables can be loaded from a `.env` file. Sensible local defaults are included in `src/config/environment_vars.js`.
 
 The available variables are as follows:
 
-    // AWS credentials
-    "AWS_ACCESS_KEY_ID": "",
-    "AWS_SECRET_ACCESS_KEY": "",
-    "S3_BUCKET": "",
+  NODE_ENV: 'development',
+  PORT: 3001,
 
-    // CDN path
-    "CDN_ROOT": "",
+  // AWS keys
+  AWS_ACCESS_KEY_ID: null,
+  AWS_SECRET_ACCESS_KEY: null,
+  AWS_REGION: null,
+  S3_BUCKET: null,
 
-    // Environment
-    "NODE_ENV": "development",
+  // Resize options
+  AUTO_ORIENT: true,
+  REMOVE_METADATA: true,
 
-    // Server port
-    "PORT": 5000,
+  // Optimization options
+  JPEG_PROGRESSIVE: true,
+  PNG_OPTIMIZATION: 2,
+  GIF_INTERLACED: true,
 
-    // Redis connection URL (named for convenience with Heroku)
-    "REDISTOGO_URL": "redis://localhost:6379",
+  // Cache expiries
+  IMAGE_EXPIRY: 60 * 60 * 24 * 30,
+  SOCIAL_IMAGE_EXPIRY: 60 * 60 * 24 * 2,
+  JSON_EXPIRY: 60 * 60 * 24 * 30,
 
-    // Redis key namespace
-    "REDIS_NAMESPACE": "img-server",
+  // Logging options
+  LOG_PREFIX: 'resizer',
+  QUEUE_LOG: true,
 
-    // Redis lock variables
-    "LOCK_INTERVAL": 200,
-    "LOCK_WAIT_TIMEOUT": 2000
+  // Response settings
+  CACHE_DEV_REQUESTS: false,
+
+  // Twitter settings
+  TWITTER_CONSUMER_KEY: null,
+  TWITTER_CONSUMER_SECRET: null,
+  TWITTER_ACCESS_TOKEN: null,
+  TWITTER_ACCESS_TOKEN_SECRET: null
 
 
 ## CDN
 
-If you chose to add a CDN in front of your S3 bucket (and let's be honest, why wouldn't you?) it is simple to add that to the `image-resizer` configuration. Simply set the CDN_ROOT environment variable and it will be included as part of the image path returned with the 302 headers.
+While `image-resizer` will work as a standalone app, almost all of its facility is moot unless you run it behind a CDN. This has only been run behind AWS Cloudfront at this point and consequently all of the response headers are customized to work best in that environment. However other CDN's can not operate much differently, any pull requests in this regard would be most appreciated ;-)
 
 
 ## Usage
 
-`http://images.example.com/:s3_bucket_path?:dimensions`
+A couple of routes are included with the default app, but the most important is the image generation one, which is as follows:
 
-Call the service via its bucket path, with a dimensions query string.
+`http://my.cdn.com/:modifiers/path/to/image.png[:metadata]`
 
-Current options
+Modifiers are a dash delimited string of the requested modifications to be made, these include:
 
-*  `s` or `square`: `s=300`
-*  `w` or `width`:  `w=300`
-*  `h` or `height`: `h=300`
-*  `c` or `crop`:   `c=100,200,50,50` which maps to width,height,cropx,cropy
+*Supported modifiers are:*
+* height:       eg. h500
+* width:        eg. w200
+* square:       eg. s50
+* crop:         eg. cfill
+* top:          eg. y12
+* left:         eg. x200
+* gravity:      eg. gs, gne
+* filter:       eg. fsepia
+* external:     eg. efacebook
 
-Extra options are:
+*Crop modifiers:*
+* fit
+    * maintain original proportions
+    * resize so image fits wholly into new dimensions
+        * eg: h400-w500 - 400x600 -> 333x500
+    * default option
+* fill
+    * maintain original proportions
+    * resize via smallest dimension, crop the largest
+    * crop image all dimensions that dont fit
+        * eg: h400-w500 - 400x600 -> 400x500
+* cut
+    * maintain original proportions
+    * no resize, crop to gravity or x/y
+* scale
+    * do not maintain original proportions
+    * force image to be new dimensions (squishing the image)
 
-* `?flush` to clear out the record and overwrite
-* `?json` to return the image metadata as JSON
-
-Examples:
-
-* `http://images.example.com/test/image.png?square=50`
-* `http://images.example.com/test/image.png?h=50`
-* `http://images.example.com/test/image.png?h=50&w=100`
-* `http://images.example.com/test/image.png?crop=100,200,50,50`
-* `http://images.example.com/test/image.png?json`
+*Examples:*
+* `http://my.cdn.com/s50/path/to/image.png`
+* `http://my.cdn.com/h50/path/to/image.png`
+* `http://my.cdn.com/h50-w100/path/to/image.png`
+* `http://my.cdn.com/s50-gne/path/to/image.png`
 
 
 ## Resizing Logic
 
-For a simple resize operation (eg: `?h=300`) then only caveat is that no operation can make an image dimension larger (we are all about keeping the image looking good).
+It is worthy of note that this application will not scale images up, we are all about keeping images looking good. So a request for `h400` on an image of only 200px in height will not scale it up.
 
-For requests for square images the logic goes that the smallest dimension is used to resize the image then the cropping removes the excess in the other direction. So an 200x300 image requested to be a 50x50 square will resize in the width to 50 and crop the excess of the height around the center. Vice versa for landscape aspects.
 
-There is no implicit logic for cropping, it merely follows the directions.
+## External Sources
+
+It is possible to bring images in from external sources and store them behind your own CDN. This is very useful when it comes to things like Facebook or Vimeo which have very inconsistent load times. Each external source can still enable any of the modification parameters list above.
+
+It is worth noting that Twitter requires a full set of credentials as you need to poll their API in order to return profile pics.
+
+A shorter expiry on images from social sources can also be set via `SOCIAL_IMAGE_EXPIRY` env var so they expiry at a faster rate than other images.
+
+It is also trivial to write new source streams via the plugins directory. Examples are in `src/streams/sources/`.
+
+
+## Metadata requests
+
+`image-resizer` can return the image metadata as an json endpoint:
+
+* `http://my.cdn.com/path/to/image.png.json`
+
+Metadata is removed in all other image requests by default, unless the env var REMOVE_METADATA is set to `false`.
 
 
 ## Heroku Deployment
@@ -159,20 +204,9 @@ As mentioned above there is a minimum set of config vars that need to be set bef
 
 To run `image-resizer` locally, the following will work for an OSX environment assuming you have node/npm installed - [NVM is useful](https://github.com/creationix/nvm).
 
-    npm install grunt-cli -g
+    npm install gulp -g
     brew install graphicsmagick
     npm install
-    grunt
+    gulp watch
 
-There are many ways to run the app locally:
-
-* `nodemon` - a great choice that restarts with code changes
-* `foreman start` - good for running the app how Heroku does
-* `node index.js` - old skool
-
-
-## Roadmap
-
-* better test coverage
-* add multi-vendor cloud support with something like [pkgcloud](https://github.com/nodejitsu/pkgcloud)
-* add non-Heroku deployment strategies (the [Fundly](http://fundly.com) production deployment is on s3).
+The gulp setup includes nodemon which runs the app nicely, restarting between code changes. `PORT` can be set in the `.env` file if you need to run on a port other than 3001.

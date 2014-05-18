@@ -21,7 +21,7 @@ Supported modifiers are:
   - left:         eg. x200
   - gravity:      eg. gs, gne
   - filter:       eg. fsepia
-  - optimization: eg. o2
+  - external:     eg. efacebook
 
 Crop modifiers:
   fit
