@@ -21,7 +21,7 @@
   },
   "repository": "git://github.com/jimmynicol/image-resizer",
   "bin": {
-    "image-resizer": "./bin"
+    "image-resizer": "./bin/image_resizer.js"
   },
   "engines": {
     "node": "0.10.28"
@@ -51,6 +51,7 @@
     "dotenv": "~0.2.8",
     "ejs": "~1.0.0",
     "gulp": "^3.6.2",
+    "gulp-bump": "^0.1.8",
     "gulp-jshint": "~1.4.2",
     "gulp-mocha": "~0.4.1",
     "gulp-nodemon": "~1.0.0",

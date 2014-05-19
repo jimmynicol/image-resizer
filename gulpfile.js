@@ -76,3 +76,19 @@ gulp.task('watch', ['lint'], function () {
   // }).on('restart', ['lint', 'test']);
   }).on('restart', ['lint']);
 });
+
+gulp.task('bump:patch', function(){
+  gulp.src('./package.json')
+    .pipe(bump({type: 'patch'}))
+    .pipe(gulp.dest('./'));
+});
+gulp.task('bump:minor', function(){
+  gulp.src('./package.json')
+    .pipe(bump({type: 'minor'}))
+    .pipe(gulp.dest('./'));
+});
+gulp.task('bump:major', function(){
+  gulp.src('./package.json')
+    .pipe(bump({type: 'major'}))
+    .pipe(gulp.dest('./'));
+});
