@@ -6,6 +6,7 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     stylish = require('jshint-stylish'),
     util = require('gulp-util'),
+    bump = require('gulp-bump'),
     _ = require('lodash');
 
 
