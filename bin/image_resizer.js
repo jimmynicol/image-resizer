@@ -2,8 +2,7 @@
 
 'use strict';
 
-var program, path, fs, mkdirp, pkg, chalk,
-    dest, appName, action, newPkg;
+var program, path, fs, mkdirp, pkg, chalk;
 
 
 program = require('commander');
@@ -38,8 +37,21 @@ function mkdir(path, fn) {
   });
 }
 
+function emptyDirectory(path, fn) {
+  fs.readdir(path, function(err, files){
+    if (err && 'ENOENT' !== err.code) {
+      throw err;
+    }
+    fn(!files || !files.length);
+  });
+}
 
-function createApplicationAt(path){
+function createApplicationAt(dir){
+  var appName, newPkg;
+
+  // Determine the app name from the directory
+  appName = path.basename(path.resolve(dir));
+
   console.log('\n' + chalk.cyan('Creating new ') + chalk.cyan.bold('image-resizer') + chalk.cyan(' app!'));
   console.log();
 
@@ -48,7 +60,7 @@ function createApplicationAt(path){
     console.log(chalk.green('   now install your dependencies') + ':');
     console.log('     $ npm install');
     console.log();
-    console.log(chalk.green('   run the app') + ':');
+    console.log(chalk.green('   then run the app') + ':');
     console.log('     $ gulp watch');
     console.log();
   });
@@ -69,58 +81,58 @@ function createApplicationAt(path){
     devDependencies: pkg.devDependencies
   };
 
-  write(path + '/package.json', JSON.stringify(newPkg, null, 2));
+  write(dir + '/package.json', JSON.stringify(newPkg, null, 2));
 
   // create index.js
-  copy(__dirname + '/./templates/index.js.tmpl', path + '/index.js');
+  copy(__dirname + '/./templates/index.js.tmpl', dir + '/index.js');
 
   // create the gulpfile
-  copy(__dirname + '/./templates/gulpfile.js.tmpl', path + '/gulpfile.js');
+  copy(__dirname + '/./templates/gulpfile.js.tmpl', dir + '/gulpfile.js');
 
   // create .env
-  copy(__dirname + '/./templates/.env.tmpl', path + '/.env');
+  copy(__dirname + '/./templates/.env.tmpl', dir + '/.env');
 
   // create .gitignore
-  copy(__dirname + '/./templates/.gitignore.tmpl', path + '/.gitignore');
+  copy(__dirname + '/./templates/.gitignore.tmpl', dir + '/.gitignore');
 
   // create .jshintrc
-  copy(__dirname + '/../.jshintrc', path + '/.jshintrc');
+  copy(__dirname + '/../.jshintrc', dir + '/.jshintrc');
 
   // create Heroku files
   //  - Procfile
   //  - .buildpacks
-  write (path + '/Procfile', 'web: node index.js');
-  copy(__dirname + '/../.buildpacks', path + '/.buildpacks');
+  write (dir + '/Procfile', 'web: node index.js');
+  copy(__dirname + '/../.buildpacks', dir + '/.buildpacks');
 
   // create plugin folders
   //  - sources
   //  - filters
-  mkdir(path + '/plugins/sources');
-  mkdir(path + '/plugins/filters');
+  mkdir(dir + '/plugins/sources');
+  mkdir(dir + '/plugins/filters');
 }
 
 /**
 Create the program and list the possible commands
 */
-program
-  .version(pkg.version)
-  .usage('[action] [options]')
-  .command('new', 'Create new clean image-resizer app')
-  .command('filter [name]', 'Create new filter stream')
-  .option('-f, --force', 'force on non-empty directory')
-  .parse(process.argv);
-
-dest = '.';
-appName = path.basename(path.resolve(dest));
-action = program.args[0];
-
-switch(action){
-case 'new':
-  createApplicationAt(dest);
-  break;
-
-case 'filter':
-  var filterName = program.args[1];
-  copy(__dirname + '/./templates/filter.js.tmpl', dest + '/plugins/filters/' + filterName + '.js');
-  break;
-}
+program.version(pkg.version);
+program.option('-f, --force', 'force app build in an non-empty directory');
+program.command('new')
+  .description('Create new clean image-resizer app')
+  .action(function(){
+    var path = '.';
+    emptyDirectory(path, function(empty){
+      if (empty || program.force){
+        createApplicationAt(path);
+      } else {
+        console.log(
+          chalk.red('\n    The current directory is not empty, please use the force (-f) option to proceed.\n')
+        );
+      }
+    });
+  });
+program.command('filter <name>')
+  .description('Create new filter stream')
+  .action(function(filterName){
+    copy(__dirname + '/./templates/filter.js.tmpl', './plugins/filters/' + filterName + '.js');
+  });
+program.parse(process.argv);
