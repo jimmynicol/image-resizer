@@ -20,11 +20,12 @@ When a new image size is requested of `image-resizer` via the CDN, it will pull 
 
 ## Getting Started
 
-    $ npm install -g image-resizer
+    $ npm install -g image-resizer gulp
     $ mkdir my_fancy_image_server
     $ cd my_fancy_image_server
     $ image-resizer new
     $ npm install
+    $ gulp watch
 
 This will create a new directory structure including all the necessary files needed to run `image-resizer`. The money file is `index.js` which is loads the express configuration and routes.
 
@@ -179,13 +180,13 @@ It is worthy of note that this application will not scale images up, we are all 
 
 ## S3 source
 
-By default the connected s3 source will be accessed to return the image. The full path of the image within the bucket is used, minus the bucket name, eg:
+By default `image-resizer` will use s3 as the image source. To access an s3 object the full path of the image within the bucket is used, minus the bucket name eg:
 
-    `https://s3.amazonaws.com/sample.bucket/test/image.png`
+    https://s3.amazonaws.com/sample.bucket/test/image.png
 
 translates to:
 
-    `http://my.cdn.com/test/image.png`
+    http://my.cdn.com/test/image.png
 
 
 ## External Sources
@@ -201,11 +202,11 @@ It is also trivial to write new source streams via the plugins directory. Exampl
 
 ## Metadata requests
 
-`image-resizer` can return the image metadata as an json endpoint:
+`image-resizer` can return the image metadata as a json endpoint:
 
 * `http://my.cdn.com/path/to/image.png.json`
 
-Metadata is removed in all other image requests by default, unless the env var REMOVE_METADATA is set to `false`.
+Metadata is removed in all other image requests by default, unless the env var `REMOVE_METADATA` is set to `false`.
 
 
 ## Heroku Deployment
