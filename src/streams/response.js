@@ -33,7 +33,7 @@ ResponseWriter.prototype.expiresIn = function(maxAge){
 ResponseWriter.prototype.shouldCacheResponse = function(){
 
   if (env.development){
-    if (env.CACHE_DEV_REQUESTS !== 'false'){
+    if (env.CACHE_DEV_REQUESTS){
       return true;
     } else {
       return false;
@@ -72,7 +72,7 @@ ResponseWriter.prototype._write = function(image){
   if (this.shouldCacheResponse()){
     this.response.set({
       'Cache-Control':  'public',
-      'Expires':        this.expiresIn(env.IMAGE_EXPIRY),
+      'Expires':        this.expiresIn(this.image.expiry),
       'Last-Modified':  (new Date(0)).toGMTString(),
       'Vary':           'Accept-Encoding'
     });

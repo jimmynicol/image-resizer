@@ -25,8 +25,8 @@ vars = {
   GIF_INTERLACED: true,
 
   // Cache expiries
-  IMAGE_EXPIRY: 60 * 60 * 24 * 30,
-  SOCIAL_IMAGE_EXPIRY: 60 * 60 * 24 * 2,
+  IMAGE_EXPIRY: 60 * 60 * 24 * 90,
+  IMAGE_EXPIRY_SHORT: 60 * 60 * 24 * 2,
   JSON_EXPIRY: 60 * 60 * 24 * 30,
 
   // Logging options

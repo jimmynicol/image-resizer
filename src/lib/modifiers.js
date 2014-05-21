@@ -42,16 +42,18 @@ Crop modifiers:
      - force image to be new dimensions (squishing the image)
 
 */
-
 'use strict';
 
 
-var _ = require('lodash'),
-    filters = require('../streams/filters'),
-    string = require('../utils/string'),
-    filterKeys, modifierMap, modKeys;
+var _, string, filters, sources,  filterKeys, sourceKeys, modifierMap, modKeys;
 
+_          = require('lodash');
+string     = require('../utils/string');
+filters    = require('../streams/filters');
+sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
+sourceKeys = _.keys(sources);
+
 
 modifierMap = [
   {
@@ -97,7 +99,8 @@ modifierMap = [
     key: 'e',
     desc: 'external',
     type: 'string',
-    values: ['local', 'facebook', 'twitter', 'vimeo', 'youtube']
+    values: sourceKeys,
+    default: 's3'
   },
   {
     key: 'f',

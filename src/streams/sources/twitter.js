@@ -36,6 +36,9 @@ function Twitter(image){
   stream.Readable.call(this, { objectMode : true });
   this.image = image;
   this.ended = false;
+
+  // set the expiry value to the shorter value
+  this.image.expiry = env.IMAGE_EXPIRY_SHORT;
 }
 
 util.inherits(Twitter, stream.Readable);

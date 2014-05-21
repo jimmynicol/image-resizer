@@ -1,10 +1,11 @@
 'use strict';
 
-var stream, util, request;
+var stream, util, request, env;
 
 stream  = require('stream');
 util    = require('util');
 request = require('request');
+env     = require('../../config/environment_vars');
 
 function contentLength(bufs){
   return bufs.reduce(function(sum, buf){
@@ -20,6 +21,9 @@ function Facebook(image){
   stream.Readable.call(this, { objectMode : true });
   this.image = image;
   this.ended = false;
+
+  // set the expiry value to the shorter value
+  this.image.expiry = env.IMAGE_EXPIRY_SHORT;
 }
 
 util.inherits(Facebook, stream.Readable);

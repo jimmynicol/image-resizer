@@ -2,6 +2,7 @@
 
 var _         = require('lodash'),
     Logger    = require('./utils/logger'),
+    env       = require('./config/environment_vars'),
     modifiers = require('./lib/modifiers');
 
 
@@ -34,6 +35,9 @@ function Image(request){
 
   // placeholder for the size of the original image
   this.originalContentLength = 0;
+
+  // set the default expiry length, can be altered by a source file
+  this.expiryLength = env.IMAGE_EXPIRY;
 
   // all logging strings will be queued here to be written on response
   this.log = new Logger();
