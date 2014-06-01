@@ -31,6 +31,8 @@ This will create a new directory structure including all the necessary files nee
 
 `image-resizer` can also simply be added as a node_module to any project and the streams interfaces used standalone. `./test.js` has a good example of how the app should work running behind Express.
 
+There is a [RubyGem](https://github.com/jimmynicol/image-resizer-rails) of helpers (both Ruby and Javascript) to assist you in building the endpoints for your `image-resizer` instance.
+
 
 ## Architecture
 
