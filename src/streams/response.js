@@ -72,7 +72,7 @@ ResponseWriter.prototype._write = function(image){
   if (this.shouldCacheResponse()){
     this.response.set({
       'Cache-Control':  'public',
-      'Expires':        this.expiresIn(this.image.expiry),
+      'Expires':        this.expiresIn(image.expiry),
       'Last-Modified':  (new Date(0)).toGMTString(),
       'Vary':           'Accept-Encoding'
     });
@@ -111,7 +111,7 @@ ResponseWriter.prototype._write = function(image){
   // flush the log messages and close the connection
   image.log.flush();
   this.end();
-
 };
+
 
 module.exports = ResponseWriter;
