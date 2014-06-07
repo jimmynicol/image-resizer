@@ -52,7 +52,10 @@ Image.prototype.parseImage = function(request){
   var imgArr = _.last(request.path.split('/')).split('.'),
       imgName = imgArr[0];
 
-  imgName = imgName.replace(/-.*/, '');
+  //// not sure why this is needed but it breaks file names with dashes 
+  //// ex: 8b0ccce0-0a6c-4270-9bc0-8b6dfaabea19.jpg will become 8b0ccce0.jpg
+  //// resulting in a http 500 from s3 
+  // imgName = imgName.replace(/-.*/, '');
 
   this.format = imgArr[1];
   this.image = [imgName, this.format].join('.');

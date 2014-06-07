@@ -72,7 +72,7 @@ ResponseWriter.prototype._write = function(image){
   if (this.shouldCacheResponse()){
     this.response.set({
       'Cache-Control':  'public',
-      'Expires':        this.expiresIn(this.image.expiry),
+      'Expires':        this.expiresIn(image.expiry),
       'Last-Modified':  (new Date(0)).toGMTString(),
       'Vary':           'Accept-Encoding'
     });
