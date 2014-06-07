@@ -1,6 +1,6 @@
 'use strict';
 
-var express, app, ir, env, Img, streams, filter;
+var express, app, ir, env, Img, streams;
 
 express = require('express');
 app     = express();
@@ -8,7 +8,6 @@ ir      = require('image-resizer');
 env     = ir.env;
 Img     = ir.img;
 streams = ir.streams;
-filter  = ir.filter;
 
 
 app.directory = __dirname;
@@ -51,7 +50,7 @@ app.get('/:modifiers/*?', function(request, response){
   image.getFile()
     .pipe(new streams.identify())
     .pipe(new streams.resize())
-    .pipe(new filter())
+    .pipe(new streams.filter())
     .pipe(new streams.optimize())
     .pipe(streams.response(request, response));
 });

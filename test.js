@@ -5,8 +5,7 @@ var express = require('express'),
     ir = require('./index'),
     env = ir.env,
     Img = ir.img,
-    streams = ir.streams,
-    filter = ir.filter;
+    streams = ir.streams;
 
 
 app.directory = __dirname;
@@ -49,7 +48,7 @@ app.get('/:modifiers/*?', function(request, response){
   image.getFile()
     .pipe(new streams.identify())
     .pipe(new streams.resize())
-    .pipe(new filter())
+    .pipe(new streams.filter())
     .pipe(new streams.optimize())
     .pipe(streams.response(request, response));
 });
