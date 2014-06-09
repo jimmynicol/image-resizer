@@ -53,7 +53,7 @@ filters    = require('../streams/filters');
 sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
 sourceKeys = _.keys(sources);
-env        = require('../../config/environment_vars');
+env        = require('../config/environment_vars');
 
 
 modifierMap = [
