@@ -45,7 +45,7 @@ Crop modifiers:
 'use strict';
 
 
-var _, string, filters, sources,  filterKeys, sourceKeys, modifierMap, modKeys;
+var _, string, filters, sources, filterKeys, sourceKeys, modifierMap, modKeys;
 
 _          = require('lodash');
 string     = require('../utils/string');
