@@ -45,7 +45,7 @@ Crop modifiers:
 'use strict';
 
 
-var _, string, filters, sources, filterKeys, sourceKeys, modifierMap, modKeys;
+var _, string, filters, sources, filterKeys, sourceKeys, modifierMap, modKeys, env;
 
 _          = require('lodash');
 string     = require('../utils/string');
@@ -53,6 +53,7 @@ filters    = require('../streams/filters');
 sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
 sourceKeys = _.keys(sources);
+env        = require('../config/environment_vars');
 
 
 modifierMap = [
@@ -100,7 +101,7 @@ modifierMap = [
     desc: 'external',
     type: 'string',
     values: sourceKeys,
-    default: 's3'
+    default: env.DEFAULT_SOURCE
   },
   {
     key: 'f',
