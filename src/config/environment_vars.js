@@ -8,6 +8,7 @@ vars = {
 
   NODE_ENV: 'development',
   PORT: 3001,
+  DEFAULT_SOURCE: 's3',
 
   // AWS keys
   AWS_ACCESS_KEY_ID: null,
