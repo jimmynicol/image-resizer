@@ -99,10 +99,9 @@ function createApplicationAt(dir){
   copy(__dirname + '/../.jshintrc', dir + '/.jshintrc');
 
   // create Heroku files
-  //  - Procfile
-  //  - .buildpacks
-  write (dir + '/Procfile', 'web: node index.js');
-  copy(__dirname + '/../.buildpacks', dir + '/.buildpacks');
+  copy(__dirname + '/./templates/.buildpacks.tmpl', dir + '/.buildpacks');
+  copy(__dirname + '/./templates/Procfile.tmpl', dir + '/Procfile');
+
 
   // create plugin folders
   //  - sources
