@@ -1,6 +1,6 @@
 {
   "name": "image-resizer",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
   "main": "index.js",
   "scripts": {
