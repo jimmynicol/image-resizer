@@ -108,7 +108,7 @@ Image.prototype.getFile = function(){
   }
 
   if (Stream === null) {
-    Stream = sources.s3;
+    Stream = sources[env.DEFAULT_SOURCE];
   }
 
   this.log.log('new stream created!');
