@@ -2,7 +2,7 @@
 
 'use strict';
 
-var program, path, fs, mkdirp, pkg, chalk;
+var program, path, fs, mkdirp, pkg, chalk, _;
 
 
 program = require('commander');
@@ -11,7 +11,7 @@ mkdirp  = require('mkdirp');
 path    = require('path');
 chalk   = require('chalk');
 pkg     = require('../package.json');
-
+_       = require('lodash');
 
 /**
 File/Directory helper functions
@@ -90,7 +90,8 @@ function createApplicationAt(dir){
   copy(__dirname + '/./templates/gulpfile.js.tmpl', dir + '/gulpfile.js');
 
   // create .env
-  copy(__dirname + '/./templates/.env.tmpl', dir + '/.env');
+  var envTmpl = fs.readFileSync(__dirname + '/./templates/.env.tmpl');
+  write(dir + '/.env', _.template(envTmpl, {cwd: process.cwd()}));
 
   // create .gitignore
   copy(__dirname + '/./templates/.gitignore.tmpl', dir + '/.gitignore');

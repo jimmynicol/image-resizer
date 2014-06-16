@@ -1,8 +1,11 @@
 'use strict';
 
-var fs = require('fs'),
-    stream = require('stream'),
-    util = require('util');
+var env, fs, stream, util;
+
+env    = require('../../config/environment_vars');
+fs     = require('fs');
+stream = require('stream');
+util   = require('util');
 
 
 function Local(image){
@@ -12,7 +15,7 @@ function Local(image){
   }
   stream.Readable.call(this, { objectMode : true });
   this.image = image;
-  this.filePath = process.cwd() + '/' + this.image.path;
+  this.filePath = env.LOCAL_FILE_PATH + '/' + this.image.path;
   this.ended = false;
 }
 

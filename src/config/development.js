@@ -1,15 +1,18 @@
 'use strict';
 
 
-var express, morgan, errorHandler;
+var env, express, morgan, errorHandler;
 
+env          = require('./environment_vars');
 express      = require('express');
 morgan       = require('morgan');
 errorHandler = require('errorhandler');
 
+console.log(process.cwd());
+
 module.exports = function(app){
 
-  app.set('views', process.cwd() + '/test');
+  app.set('views', env.LOCAL_FILE_PATH + '/test');
   app.engine('html', require('ejs').renderFile);
   app.set('port', process.env.PORT || 3001);
   app.use(morgan('dev'));
