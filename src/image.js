@@ -1,9 +1,27 @@
 'use strict';
 
-var _         = require('lodash'),
-    Logger    = require('./utils/logger'),
-    env       = require('./config/environment_vars'),
-    modifiers = require('./lib/modifiers');
+var _, Logger, env, modifiers, stream, util;
+
+_         = require('lodash');
+Logger    = require('./utils/logger');
+env       = require('./config/environment_vars');
+modifiers = require('./lib/modifiers');
+stream    = require('stream');
+util      = require('util');
+
+
+// Simple stream to represent an error at an early stage, for instance a
+// request to an excluded source.
+function ErrorStream(image){
+  stream.Readable.call(this, { objectMode : true });
+  this.image = image;
+}
+util.inherits(ErrorStream, stream.Readable);
+
+ErrorStream.prototype._read = function(){
+  this.push(this.image);
+  this.push(null);
+};
 
 
 function Image(request){
@@ -99,19 +117,29 @@ Image.prototype.isBuffer = function(){
 
 Image.prototype.getFile = function(){
   var sources = require('./streams/sources'),
+      excludes = env.EXCLUDE_SOURCES ? env.EXCLUDE_SOURCES.split(',') : [],
+      streamType = env.DEFAULT_SOURCE,
       Stream = null;
 
+  // look to see if the request has a specified source
   if (_.has(this.modifiers, 'external')){
     if (_.has(sources, this.modifiers.external)){
-      Stream = sources[this.modifiers.external];
+      streamType = this.modifiers.external;
     }
   }
 
-  if (Stream === null) {
-    Stream = sources[env.DEFAULT_SOURCE];
+  // if this request if for an excluded source create an ErrorStream
+  if (excludes.indexOf(streamType) > -1){
+    this.error = new Error(streamType + ' is an excluded source');
+    Stream = ErrorStream;
   }
 
-  this.log.log('new stream created!');
+  // if all is well find the appropriate stream
+  else {
+    this.log.log('new stream created!');
+    Stream = sources[streamType];
+  }
+
   return new Stream(this);
 };
 

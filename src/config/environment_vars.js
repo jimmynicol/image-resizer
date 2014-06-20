@@ -9,6 +9,7 @@ vars = {
   NODE_ENV: 'development',
   PORT: 3001,
   DEFAULT_SOURCE: 's3',
+  EXCLUDE_SOURCES: null, // add comma delimited list
 
   // AWS keys
   AWS_ACCESS_KEY_ID: null,

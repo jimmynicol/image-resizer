@@ -8,8 +8,6 @@ express      = require('express');
 morgan       = require('morgan');
 errorHandler = require('errorhandler');
 
-console.log(process.cwd());
-
 module.exports = function(app){
 
   app.set('views', env.LOCAL_FILE_PATH + '/test');

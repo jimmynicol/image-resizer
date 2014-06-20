@@ -14,7 +14,7 @@ modules   = {};
 files = require('glob').sync(__dirname + '/*.js');
 for (var i=0; i < files.length; i++){
   var mod = path.basename(files[i], '.js');
-  if ( mod !== 'index' ){
+  if (mod !== 'index'){
     modules[mod] = require(files[i]);
   }
 }

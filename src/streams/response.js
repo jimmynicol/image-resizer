@@ -48,8 +48,8 @@ ResponseWriter.prototype._write = function(image){
   if (image.isError()){
     var statusCode = image.error.statusCode || 500;
     this.response.send(statusCode, null);
+    image.log.error(image.error.message);
     image.log.flush();
-
     return this.end();
   }
 
