@@ -59,7 +59,7 @@ Twitter.prototype._read = function(){
 
   // pass through the stream with an error if the twit library didnt start
   if (!t){
-    this.image.error = new Error('Need twitter valid twitter credentials');
+    this.image.error = new Error('Need valid twitter credentials');
     this.push(this.image);
     return this.push(null);
   }

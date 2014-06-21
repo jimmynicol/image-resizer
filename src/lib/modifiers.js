@@ -237,6 +237,7 @@ exports.parse = function(requestUrl, namedMods){
     if (_.has(namedMods, modStr)){
       _.forEach(namedMods[modStr], function(value, key){
         if (key === 'square'){
+          mods.action = 'square';
           mods.height = value;
           mods.width = value;
         } else {
