@@ -2,6 +2,7 @@
 
 var chai   = require('chai'),
     expect = chai.expect,
+    sm     = require('sandboxed-module'),
     mod    = require('../../../src/lib/modifiers');
 
 chai.should();
@@ -115,6 +116,45 @@ describe('Modifiers module', function(){
       expect(p.width).to.equal(400);
       expect(p.height).to.be.null;
     });
+  });
+
+
+  describe('Named modifiers', function(){
+    var nm = {
+      "small-avatar": {
+        "square": 60
+      },
+      "large-avatar": {
+        "square": 120
+      },
+      "gallery": {
+        "height": 400,
+        "width": 600
+      },
+      "thumb": {
+        "gravity": "ne",
+        "square": 50,
+        "external": "local"
+      }
+    };
+
+    it('should read a thumbnail named config and set accordingly', function(){
+      var request = '/thumb/path/to/image.png',
+          tn = nm.thumb;
+
+      mod.parse(request, nm).gravity.should.equal(tn.gravity);
+      mod.parse(request, nm).height.should.equal(tn.square);
+      mod.parse(request, nm).width.should.equal(tn.square);
+    });
+
+    it('should read a gallery named config and set accordingly', function(){
+      var request = '/gallery/path/to/image.png',
+          tn = nm.gallery;
+
+      mod.parse(request, nm).height.should.equal(tn.height);
+      mod.parse(request, nm).width.should.equal(tn.width);
+    });
+
   });
 
 });

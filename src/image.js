@@ -128,7 +128,7 @@ Image.prototype.getFile = function(){
     }
   }
 
-  // if this request if for an excluded source create an ErrorStream
+  // if this request is for an excluded source create an ErrorStream
   if (excludes.indexOf(streamType) > -1){
     this.error = new Error(streamType + ' is an excluded source');
     Stream = ErrorStream;

@@ -11,6 +11,9 @@ vars = {
   DEFAULT_SOURCE: 's3',
   EXCLUDE_SOURCES: null, // add comma delimited list
 
+  // Restrict to named modifiers strings only
+  NAMED_MODIFIERS_ONLY: false,
+
   // AWS keys
   AWS_ACCESS_KEY_ID: null,
   AWS_SECRET_ACCESS_KEY: null,

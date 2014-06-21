@@ -57,6 +57,7 @@
     "gulp-nodemon": "~1.0.0",
     "gulp-util": "~2.2.14",
     "jshint-stylish": "~0.1.5",
+    "sandboxed-module": "^1.0.0",
     "sinon": "~1.8.2",
     "sinon-chai": "~2.5.0"
   }

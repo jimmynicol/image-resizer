@@ -45,7 +45,8 @@ Crop modifiers:
 'use strict';
 
 
-var _, string, filters, sources, filterKeys, sourceKeys, modifierMap, modKeys, env;
+var _, string, filters, sources, filterKeys, sourceKeys, modifierMap,
+    modKeys, env, fs, namedModifierMap;
 
 _          = require('lodash');
 string     = require('../utils/string');
@@ -54,6 +55,7 @@ sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
 sourceKeys = _.keys(sources);
 env        = require('../config/environment_vars');
+fs         = require('fs');
 
 
 modifierMap = [
@@ -136,29 +138,23 @@ function getModifier(key){
 
 exports.mod = getModifier;
 
+// Check to see if there is a config file of named modifier aliases
+if (fs.existsSync(process.cwd() + '/named_modifiers.json')){
+  var file = fs.readFileSync(process.cwd() + '/named_modifiers.json');
+  namedModifierMap = JSON.parse(file);
+}
 
-exports.parse = function(requestUrl){
-  var segments, mods, image, key, value, mod, gravity, crop;
 
-  gravity  = getModifier('g');
-  crop     = getModifier('c');
-  segments = requestUrl.replace(/^\//,'').split('/');
-  image    = _.last(segments).toLowerCase();
+// Take an array of modifiers and parse the keys and values into mods hash
+function parseModifiers(mods, modArr) {
+  var key, value, mod;
 
-  // set the mod keys and defaults
-  mods = {
-    action: 'original',
-    height: null,
-    width: null,
-    gravity: gravity.default,
-    crop: crop.default
-  };
-
-  _.each(_.first(segments).split('-'), function(item){
+  _.each(modArr, function(item){
     key = item[0];
     value = item.slice(1);
 
     if (inArray(key, modKeys)){
+
       // get the modifier object that responds to the listed key
       mod = getModifier(key);
 
@@ -205,8 +201,56 @@ exports.parse = function(requestUrl){
         }
         break;
       }
+
     }
   });
+
+  return mods;
+}
+
+
+// Exposed method to parse an incoming URL for modifiers, can add a map of
+// named (preset) modifiers if need be (mostly just for unit testing). Named
+// modifiers are usually added via config json file in root of application.
+exports.parse = function(requestUrl, namedMods){
+  var segments, mods, modStr, image, gravity, crop;
+
+  gravity   = getModifier('g');
+  crop      = getModifier('c');
+  segments  = requestUrl.replace(/^\//,'').split('/');
+  modStr    = _.first(segments);
+  image     = _.last(segments).toLowerCase();
+  namedMods = typeof namedMods === 'undefined' ? namedModifierMap : namedMods;
+
+
+  // set the mod keys and defaults
+  mods = {
+    action: 'original',
+    height: null,
+    width: null,
+    gravity: gravity.default,
+    crop: crop.default
+  };
+
+  // check the request to see if it includes a named modifier
+  if (namedMods && !_.isEmpty(namedMods)){
+    if (_.has(namedMods, modStr)){
+      _.forEach(namedMods[modStr], function(value, key){
+        if (key === 'square'){
+          mods.height = value;
+          mods.width = value;
+        } else {
+          mods[key] = value;
+        }
+      });
+    }
+  }
+
+  // check the request for available modifiers, unless we are restricting to
+  // only named modifiers.
+  if (!env.NAMED_MODIFIERS_ONLY) {
+    mods = parseModifiers(mods, modStr.split('-'));
+  }
 
   // check to see if this a metadata call, it trumps all other requested mods
   if (image.slice(-5) === '.json'){
