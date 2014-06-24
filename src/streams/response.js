@@ -92,8 +92,10 @@ ResponseWriter.prototype._write = function(image){
       )
     );
     image.log.log(
-      'reduction:',
-      image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
+      // 'reduction:',
+      // image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
+      'size saving:',
+      image.log.colors.grey(image.sizeSaving() + '%')
     );
 
     // as a debugging step print a checksum for the modified image, so we can

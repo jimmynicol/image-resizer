@@ -150,4 +150,11 @@ Image.prototype.sizeReduction = function(){
 };
 
 
+Image.prototype.sizeSaving = function(){
+  var oCnt = this.originalContentLength,
+      size = this.contents.length;
+  return ((oCnt - size)/oCnt * 100).toFixed(2);
+};
+
+
 module.exports = Image;
