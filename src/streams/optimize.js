@@ -14,8 +14,16 @@ function optimize(image, callback){
   imgmin = new Imagemin()
     .src(image.contents)
     .use(Imagemin.gifsicle(env.GIF_INTERLACED))
-    .use(Imagemin.jpegtran(env.JPEG_PROGRESSIVE))
-    .use(Imagemin.optipng(env.PNG_OPTIMIZATION));
+    .use(Imagemin.jpegtran(env.JPEG_PROGRESSIVE));
+
+  switch(env.PNG_OPTIMIZER){
+  case 'pngquant':
+    imgmin.use(Imagemin.pngquant());
+    break;
+  case 'optipng':
+    imgmin.use(Imagemin.optipng(env.PNG_OPTIMIZATION));
+    break;
+  }
 
   image.log.time('optimize:' + image.format);
 
@@ -36,7 +44,6 @@ function optimize(image, callback){
 module.exports = function(){
 
   return map(function(image, callback){
-
     // pass through if there is an error
     if (image.isError()){
       return callback(null, image);

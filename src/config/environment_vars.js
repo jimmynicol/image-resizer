@@ -21,11 +21,13 @@ vars = {
   S3_BUCKET: null,
 
   // Resize options
+  RESIZE_PROCESS_ORIGINAL: true,
   AUTO_ORIENT: true,
   REMOVE_METADATA: true,
 
   // Optimization options
   JPEG_PROGRESSIVE: true,
+  PNG_OPTIMIZER: 'pngquant',
   PNG_OPTIMIZATION: 2,
   GIF_INTERLACED: true,
 

@@ -83,6 +83,15 @@ describe('Image class', function(){
     });
   });
 
+  describe('local formats', function(){
+    it('should recognise a local source', function(){
+      var localPath = '/elocal/path/to/image.png',
+          img = new Img({path: localPath});
+      console.log(img);
+      img.modifiers.external.should.equal('local');
+    });
+  });
+
 
   describe('bad formats', function(){
     it('should set error if the format is not valid', function(){

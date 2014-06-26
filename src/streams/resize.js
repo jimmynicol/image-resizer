@@ -24,13 +24,18 @@ module.exports = function(){
       return callback(null, image);
     }
 
+    if (env.RESIZE_PROCESS_ORIGINAL === false){
+      image.log.log('resize: original no resize');
+      return callback(null, image);
+    }
+
     // handle the stream response for any of the resizing actions
-    var streamResponse = function(err, stdout){
+    var streamResponse = function(err, data){
       if (err) {
         image.log.error('resize error', err);
         image.error = new Error(err);
       } else {
-        image.contents = stdout;
+        image.contents = data;
       }
       image.log.timeEnd('resize');
       callback(null, image);
@@ -136,7 +141,7 @@ module.exports = function(){
 
 
     case 'original' :
-      r.stream(streamResponse);
+      r.toBuffer(streamResponse);
       break;
 
     }

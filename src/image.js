@@ -110,8 +110,9 @@ Image.prototype.isStream = function(){
 
 
 Image.prototype.isBuffer = function(){
-  var Buffer = require('buffer');
-  Buffer.isBuffer(this.contents);
+  return !!this.contents &&
+    typeof this.contents === 'object' &&
+    Object.prototype.toString.call(this.contents.parent) === '[object SlowBuffer]';
 };
 
 
