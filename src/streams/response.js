@@ -31,7 +31,6 @@ ResponseWriter.prototype.expiresIn = function(maxAge){
 
 
 ResponseWriter.prototype.shouldCacheResponse = function(){
-
   if (env.development){
     if (env.CACHE_DEV_REQUESTS){
       return true;
@@ -92,8 +91,6 @@ ResponseWriter.prototype._write = function(image){
       )
     );
     image.log.log(
-      // 'reduction:',
-      // image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
       'size saving:',
       image.log.colors.grey(image.sizeSaving() + '%')
     );
