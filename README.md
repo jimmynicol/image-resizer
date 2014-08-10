@@ -81,6 +81,11 @@ The available variables are as follows:
 
     NODE_ENV: 'development',
     PORT: 3001,
+    DEFAULT_SOURCE: 's3',
+    EXCLUDE_SOURCES: null, // add comma delimited list
+
+    // Restrict to named modifiers strings only
+    NAMED_MODIFIERS_ONLY: false,
 
     // AWS keys
     AWS_ACCESS_KEY_ID: null,
@@ -89,16 +94,18 @@ The available variables are as follows:
     S3_BUCKET: null,
 
     // Resize options
+    RESIZE_PROCESS_ORIGINAL: true,
     AUTO_ORIENT: true,
     REMOVE_METADATA: true,
 
     // Optimization options
     JPEG_PROGRESSIVE: true,
+    PNG_OPTIMIZER: 'pngquant',
     PNG_OPTIMIZATION: 2,
     GIF_INTERLACED: true,
 
     // Cache expiries
-    IMAGE_EXPIRY: 60 * 60 * 24 * 30,
+    IMAGE_EXPIRY: 60 * 60 * 24 * 90,
     IMAGE_EXPIRY_SHORT: 60 * 60 * 24 * 2,
     JSON_EXPIRY: 60 * 60 * 24 * 30,
 
@@ -113,14 +120,17 @@ The available variables are as follows:
     TWITTER_CONSUMER_KEY: null,
     TWITTER_CONSUMER_SECRET: null,
     TWITTER_ACCESS_TOKEN: null,
-    TWITTER_ACCESS_TOKEN_SECRET: null
+    TWITTER_ACCESS_TOKEN_SECRET: null,
+
+    // Where are the local files kept?
+    LOCAL_FILE_PATH: process.cwd()
 
 
 ## Optimization
 
 Optimization of images is done via [Imagemin](https://github.com/kevva/imagemin). Each image type optimizer is as follows:
 
-* *.png*:  optipng  (default level of 2, configurable by `PNG_OPTIMIZATION`)
+* *.png*:  pngquant (default level of 2, configurable by `PNG_OPTIMIZATION`)
 * *.jpeg*: jpegtran (progressive by default, `JPEG_PROGRESSIVE`)
 * *.gif*:  gifsicle (interlaced by default, `GIF_INTERLACED`)
 
