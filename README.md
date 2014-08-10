@@ -75,6 +75,8 @@ For Heroku deployment the minimum required variables are:
     S3_BUCKET
     NODE_ENV
 
+If you choose to change your default source to be something other than `S3` then the `NODE_ENV` variable is the only required one (and whatever you need for your default source).
+
 For convenience in local and non-Heroku deployments the variables can be loaded from a `.env` file. Sensible local defaults are included in `src/config/environment_vars.js`.
 
 The available variables are as follows:
