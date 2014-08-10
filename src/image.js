@@ -28,9 +28,6 @@ function Image(request){
   // placeholder for any error objects
   this.error = null;
 
-  // store the query string
-  this.queryString = request.query;
-
   // set a mark for the start of the process
   this.mark = Date.now();
 

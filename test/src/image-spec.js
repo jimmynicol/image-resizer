@@ -69,6 +69,7 @@ describe('Image class', function(){
           img = new Img({path: '/path/to/' + perioded + '.json'});
       img.image.should.equal(perioded);
     });
+
   });
 
 
@@ -87,7 +88,6 @@ describe('Image class', function(){
     it('should recognise a local source', function(){
       var localPath = '/elocal/path/to/image.png',
           img = new Img({path: localPath});
-      console.log(img);
       img.modifiers.external.should.equal('local');
     });
   });
