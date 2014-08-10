@@ -18,7 +18,7 @@ ir.expressConfig(app);
 Return the modifiers map as a documentation endpoint
 */
 app.get('/modifiers.json', function(request, response){
-  response.json(200, ir.modifiers);
+  response.status(200).json(ir.modifiers);
 });
 
 
@@ -33,7 +33,7 @@ if (env.development){
 
   // Show the environment variables and their current values
   app.get('/env', function(request, response){
-    response.json(200, env);
+    response.status(200).json(env);
   });
 }
 
