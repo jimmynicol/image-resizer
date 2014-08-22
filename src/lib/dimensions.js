@@ -90,30 +90,26 @@ exports.cropFill = function(modifiers, size){
     modifiers.height = modifiers.width;
   }
 
-  if (size.width >= size.height) {
-    // need to check for situations where the requested size is bigger
-    // than the original dimension.
-    if (modifiers.height > size.height) {
-      cropWidth = cropHeight = size.height;
-    } else {
-      cropWidth = cropHeight = modifiers.height;
-    }
-
-    ht = newHt = cropHeight;
-    wd = null;
-    newWd = ht / size.height * size.width;
+  if (modifiers.width > size.width && modifiers.height <= size.height) {
+    cropWidth = size.width;
+    cropHeight = modifiers.height;
+  } else if (modifiers.width <= size.width && modifiers.height > size.height) {
+    cropWidth = modifiers.width;
+    cropHeight = size.height;
+  } else if (modifiers.width > size.width && modifiers.height > size.height) {
+    cropWidth = size.width;
+    cropHeight = size.height;
+  } else {
+    cropWidth = modifiers.width;
+    cropHeight = modifiers.height;
   }
 
-  else {
-    if (modifiers.width > size.width) {
-      cropWidth = cropHeight = size.width;
-    } else {
-      cropWidth = cropHeight = modifiers.width;
-    }
+  wd = newWd = cropWidth;
+  ht = newHt = Math.round(newWd*(size.height/size.width));
 
-    ht = null;
-    wd = newWd = cropWidth;
-    newHt = wd / size.width * size.height;
+  if(newHt < cropHeight) {
+    ht = newHt = cropHeight;
+    wd = newWd = Math.round(newHt*(size.width/size.height));
   }
 
   // get the crop X/Y as defined by the gravity or x/y modifiers
@@ -132,3 +128,4 @@ exports.cropFill = function(modifiers, size){
     }
   };
 };
+
