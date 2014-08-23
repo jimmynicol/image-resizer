@@ -62,7 +62,7 @@ ResponseWriter.prototype._write = function(image){
       });
     }
 
-    this.response.json(200, image.contents);
+    this.response.status(200).json(image.contents);
     image.log.flush();
 
     return this.end();
