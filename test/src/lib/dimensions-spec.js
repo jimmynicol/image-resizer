@@ -82,7 +82,6 @@ describe('Dimensions module', function(){
 
     it('should return correct values for default gravity', function(){
       var s = dim.cropFill(modifiers, size);
-      expect(s.resize.width).to.be.null;
       s.resize.height.should.equal(50);
       s.crop.x.should.equal(Math.floor(((50/400 * 600) - 50)/2));
     });
@@ -99,6 +98,14 @@ describe('Dimensions module', function(){
       var s = dim.cropFill(modifiers, size);
       s.crop.x.should.equal(25);
       s.crop.y.should.equal(0);
+    });
+
+    it('should crop the largest dimension', function(){
+      var mods = { gravity: 'c', height: 40, width: 50 };
+      var s = dim.cropFill(mods, size);
+      console.log(s);
+      s.crop.height.should.equal(40);
+      s.crop.width.should.equal(50);
     });
   });
 
