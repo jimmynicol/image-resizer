@@ -76,7 +76,8 @@ function createApplicationAt(dir){
     dependencies: {
       'image-resizer': '~' + pkg.version,
       'express': pkg.dependencies.express,
-      'lodash': pkg.dependencies.lodash
+      'lodash': pkg.dependencies.lodash,
+      'gm': pkg.dependencies.gm
     },
     devDependencies: pkg.devDependencies
   };

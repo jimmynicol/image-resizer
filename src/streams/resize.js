@@ -24,7 +24,7 @@ module.exports = function(){
       return callback(null, image);
     }
 
-    if (env.RESIZE_PROCESS_ORIGINAL === false){
+    if (image.modifiers.action === 'original' && env.RESIZE_PROCESS_ORIGINAL === false){
       image.log.log('resize: original no resize');
       return callback(null, image);
     }

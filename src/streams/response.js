@@ -46,7 +46,7 @@ ResponseWriter.prototype.shouldCacheResponse = function(){
 ResponseWriter.prototype._write = function(image){
   if (image.isError()){
     var statusCode = image.error.statusCode || 500;
-    this.response.send(statusCode, null);
+    this.response.status(statusCode);
     image.log.error(image.error.message);
     image.log.flush();
     return this.end();
@@ -104,7 +104,7 @@ ResponseWriter.prototype._write = function(image){
       image.log.log('checksum', shasum.digest('hex'));
     }
 
-    this.response.send(200, image.contents);
+    this.response.status(200).send(image.contents);
   }
 
   // flush the log messages and close the connection
