@@ -189,7 +189,7 @@ function parseModifiers(mods, modArr) {
         }
         break;
       case 'external':
-        value = string.sanitize(value, 'alpha');
+        value = string.sanitize(value, 'alphanumeric');
         if (inArray(value.toLowerCase(), mod.values)){
           mods.external = value.toLowerCase();
         }

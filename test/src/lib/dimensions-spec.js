@@ -103,7 +103,6 @@ describe('Dimensions module', function(){
     it('should crop the largest dimension', function(){
       var mods = { gravity: 'c', height: 40, width: 50 };
       var s = dim.cropFill(mods, size);
-      console.log(s);
       s.crop.height.should.equal(40);
       s.crop.width.should.equal(50);
     });
