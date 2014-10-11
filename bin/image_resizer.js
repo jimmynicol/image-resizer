@@ -30,7 +30,7 @@ function mkdir(path, fn) {
     if (err) {
       throw err;
     }
-    console.log('    ' + chalk.green('create') + ' : ' + path);
+    console.log('    ' + chalk.green('create') + ': ' + path);
     if (typeof fn === 'function'){
       fn();
     }
