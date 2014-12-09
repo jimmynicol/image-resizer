@@ -1,19 +1,17 @@
 # Image-Resizer
 
-*NOTE:* Completely refactored and improved, if you are looking for the older version it is tagged as [v0.0.1](https://github.com/jimmynicol/image-resizer/tree/v0.0.1).
-
 `image-resizer` is a [Node.js](http://nodejs.org) application that sits as a  custom origin to your CDN and will resize/optimise images on-the-fly. It is Heroku ready, but can also be deployed easily to any cloud provider (has been used with success on AWS).
 
-Originally conceived as a side-project then rolled back into [Fundly](http://fundly.com), `image-resizer` was built to abstract the need to set image dimensions during the upload and storage phase of images in a modern web application. Faffing around with CarrierWave and Paperclip (while great resources for Rails devs) got to be troublesome and the need for resizing images on-the-fly arose.
-
-`image-resizer` will be run as service in the Fundly Heroku stack, so it will be actively improved as a result. An earlier version of `image-resizer` was running successfully in production from June 2013.
+The primary goal for this project was to abstract the need to set image dimensions during the upload and storage phase of images in a modern web application.
 
 
 ## Overview
 
-The server is now based on Express 4.0 and removes the previous dependency on Redis so it is now a standalone app that can be run on Heroku (or elsewhere) with out the need for any external services.
+Building and deploying your own version of `image-resizer` is as easy as running the cli tool (`image-resizer new`), setting your [Heroku configs](#environment-variables) and firing it up!
 
-`image-resizer` has added a plugin architecture that allows you to add your own image sources. Out of the box it supports: S3, Facebook, Twitter, Youtube, Vimeo (and local file system in development mode).
+Based on Express.js `image-resizer` uses [gm](https://github.com/aheckmann/gm) and [imagemin](https://github.com/imagemin/imagemin) under the hood to modify and optimise your images.
+
+There is also a plugin architecture that allows you to add your own image sources. Out of the box it supports: S3, Facebook, Twitter, Youtube, Vimeo (and local file system in development mode).
 
 When a new image size is requested of `image-resizer` via the CDN, it will pull down the original image from the cloud. It will then resize according to the requested dimensions, optimize according to file type and optionally filter the image. All responses are crafted with custom responses to maximise the facility of the CDN.
 
@@ -43,8 +41,6 @@ Inspired a lot by [Gulp](http://gulpjs.com) `image-resizer` passes around an Ima
 Images are also no longer modified and sent back to s3 for storage. The full power of the CDN is used for storing the modified images. This greatly improves performance both on the server side and client side. Google PageSpeed did not like the 302 redirects returned by an `image-resizer` instance.
 
 Also removing the need to push data to s3 helps the server processing as this can be a wildly inconsistent action.
-
-`image-resizer` is now released as a npm package and a cli script can build a working server instance that can be pushed directly to Heroku.
 
 
 ## Plugins
@@ -246,3 +242,9 @@ To run `image-resizer` locally, the following will work for an OSX environment a
 The gulp setup includes nodemon which runs the app nicely, restarting between code changes. `PORT` can be set in the `.env` file if you need to run on a port other than 3001.
 
 Tests can be run with: `gulp test`
+
+
+## Early promise-based version of codebase
+
+*NOTE:* Completely refactored and improved, if you are looking for the older version it is tagged as [v0.0.1](https://github.com/jimmynicol/image-resizer/tree/v0.0.1).
+
