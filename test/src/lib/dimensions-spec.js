@@ -119,13 +119,29 @@ describe('Dimensions module', function(){
       s.y.should.equal(modifiers.y);
     });
 
-    it('should not exceed bounds on either x or y value', function(){
+    it('should not exceed bounds on x value', function(){
+      modifiers.width = 90;
       modifiers.x = 700;
+      modifiers.y = 40;
+      var s = dim.xy(modifiers, size.width, size.height, modifiers.width, modifiers.height);
+      s.x.should.equal(510);
+      s.y.should.equal(40);
+      s.x.should.not.equal(modifiers.x);
+      s.y.should.equal(modifiers.y);
+    });
+
+    it('should not exceed bounds on y value', function(){
+      modifiers.height = 90;
+      modifiers.x = 60;
       modifiers.y = 700;
       var s = dim.xy(modifiers, size.width, size.height, modifiers.width, modifiers.height);
-      s.x.should.not.equal(modifiers.x);
+      s.x.should.equal(60);
+      s.y.should.equal(310);
+      s.x.should.equal(modifiers.x);
       s.y.should.not.equal(modifiers.y);
     });
+
+
 
   });
 

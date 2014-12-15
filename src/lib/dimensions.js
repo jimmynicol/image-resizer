@@ -62,13 +62,21 @@ function xy(modifiers, width, height, cropWidth, cropHeight){
     x = modifiers.x;
     if (x <= width - cropWidth){
       dims.x = modifiers.x;
+    }else{
+      // don't ignore modifier dimension
+      // instead, place within bounds
+      dims.x = width - cropWidth;
     }
   }
 
   if (_.has(modifiers, 'y')){
     y = modifiers.y;
-    if (y <= width - cropWidth){
+    if (y <= height - cropHeight){
       dims.y = modifiers.y;
+    }else{
+      // don't ignore modifier dimension
+      // instead, place within bounds
+      dims.y = height - cropHeight;
     }
   }
 
