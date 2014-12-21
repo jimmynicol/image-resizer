@@ -45,11 +45,11 @@ ResponseWriter.prototype.shouldCacheResponse = function(){
 
 ResponseWriter.prototype._write = function(image){
   if (image.isError()){
-    var statusCode = image.error.statusCode || 500;
-    this.response.send(statusCode, null);
     image.log.error(image.error.message);
     image.log.flush();
-    return this.end();
+    var statusCode = image.error.statusCode || 500;
+    this.response.status(statusCode).end();
+    return;
   }
 
   if (image.modifiers.action === 'json'){
@@ -62,7 +62,7 @@ ResponseWriter.prototype._write = function(image){
       });
     }
 
-    this.response.json(200, image.contents);
+    this.response.status(200).json(image.contents);
     image.log.flush();
 
     return this.end();
@@ -104,7 +104,7 @@ ResponseWriter.prototype._write = function(image){
       image.log.log('checksum', shasum.digest('hex'));
     }
 
-    this.response.send(200, image.contents);
+    this.response.status(200).send(image.contents);
   }
 
   // flush the log messages and close the connection

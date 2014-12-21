@@ -1,6 +1,6 @@
 {
   "name": "image-resizer",
-  "version": "0.9.1",
+  "version": "0.9.6",
   "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "image-resizer": "./bin/image_resizer.js"
   },
   "engines": {
-    "node": "0.10.28"
+    "node": ">=0.10.31"
   },
   "dependencies": {
     "aws-sdk": "~2.0.0-rc9",
@@ -32,10 +32,10 @@
     "commander": "^2.2.0",
     "concat-stream": "~1.4.5",
     "errorhandler": "^1.0.1",
-    "express": "^4.2.0",
+    "express": "^4.9.7",
     "glob": "~3.2.9",
     "gm": "~1.14.2",
-    "imagemin": "~0.4.6",
+    "imagemin": "^0.4.9",
     "knox": "~0.8.9",
     "lodash": "~2.4.1",
     "map-stream": "~0.1.0",

@@ -69,6 +69,7 @@ describe('Image class', function(){
           img = new Img({path: '/path/to/' + perioded + '.json'});
       img.image.should.equal(perioded);
     });
+
   });
 
 
@@ -81,13 +82,17 @@ describe('Image class', function(){
       var img = new Img({path: '/s50-gne/path/to/image.jpg'});
       img.path.should.equal('path/to/image.jpg');
     });
+    it('should return path when only the source is specified', function(){
+      var img = new Img({path: '/elocal/path/to/image.jpg'});
+      img.path.should.equal('path/to/image.jpg');
+    });
   });
+
 
   describe('local formats', function(){
     it('should recognise a local source', function(){
       var localPath = '/elocal/path/to/image.png',
           img = new Img({path: localPath});
-      console.log(img);
       img.modifiers.external.should.equal('local');
     });
   });

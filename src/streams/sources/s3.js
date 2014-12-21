@@ -7,14 +7,17 @@ s3     = require('aws-sdk').S3;
 stream = require('stream');
 util   = require('util');
 
+try {
+  // create an AWS S3 client with the config data
+  client = new s3({
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+    region: env.AWS_REGION
+  });
+  bucket = env.S3_BUCKET;
+} catch(e) {
 
-// create an AWS S3 client with the config data
-client = new s3({
-  accessKeyId: env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-  region: env.AWS_REGION
-});
-bucket = env.S3_BUCKET;
+}
 
 
 function s3Stream(image){

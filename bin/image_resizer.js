@@ -30,7 +30,7 @@ function mkdir(path, fn) {
     if (err) {
       throw err;
     }
-    console.log('    ' + chalk.green('create') + ' : ' + path);
+    console.log('    ' + chalk.green('create') + ': ' + path);
     if (typeof fn === 'function'){
       fn();
     }
@@ -76,7 +76,8 @@ function createApplicationAt(dir){
     dependencies: {
       'image-resizer': '~' + pkg.version,
       'express': pkg.dependencies.express,
-      'lodash': pkg.dependencies.lodash
+      'lodash': pkg.dependencies.lodash,
+      'gm': pkg.dependencies.gm
     },
     devDependencies: pkg.devDependencies
   };

@@ -82,7 +82,6 @@ describe('Dimensions module', function(){
 
     it('should return correct values for default gravity', function(){
       var s = dim.cropFill(modifiers, size);
-      expect(s.resize.width).to.be.null;
       s.resize.height.should.equal(50);
       s.crop.x.should.equal(Math.floor(((50/400 * 600) - 50)/2));
     });
@@ -100,6 +99,13 @@ describe('Dimensions module', function(){
       s.crop.x.should.equal(25);
       s.crop.y.should.equal(0);
     });
+
+    it('should crop the largest dimension', function(){
+      var mods = { gravity: 'c', height: 40, width: 50 };
+      var s = dim.cropFill(mods, size);
+      s.crop.height.should.equal(40);
+      s.crop.width.should.equal(50);
+    });
   });
 
 
@@ -113,13 +119,29 @@ describe('Dimensions module', function(){
       s.y.should.equal(modifiers.y);
     });
 
-    it('should not exceed bounds on either x or y value', function(){
+    it('should not exceed bounds on x value', function(){
+      modifiers.width = 90;
       modifiers.x = 700;
+      modifiers.y = 40;
+      var s = dim.xy(modifiers, size.width, size.height, modifiers.width, modifiers.height);
+      s.x.should.equal(510);
+      s.y.should.equal(40);
+      s.x.should.not.equal(modifiers.x);
+      s.y.should.equal(modifiers.y);
+    });
+
+    it('should not exceed bounds on y value', function(){
+      modifiers.height = 90;
+      modifiers.x = 60;
       modifiers.y = 700;
       var s = dim.xy(modifiers, size.width, size.height, modifiers.width, modifiers.height);
-      s.x.should.not.equal(modifiers.x);
+      s.x.should.equal(60);
+      s.y.should.equal(310);
+      s.x.should.equal(modifiers.x);
       s.y.should.not.equal(modifiers.y);
     });
+
+
 
   });
 
