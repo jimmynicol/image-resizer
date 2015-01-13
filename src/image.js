@@ -40,7 +40,7 @@ function Image(request){
   }
 
   // determine the requested modifications
-  this.modifiers = modifiers.parse(request.path);
+  this.modifiers = modifiers.parse(request.path.replace(/%20/g,' '));
 
   // pull the various parts needed from the request params
   this.parseUrl(request);
@@ -65,7 +65,7 @@ Image.formatErrorText = 'not valid image format';
 
 // Determine the name and format of the requested image
 Image.prototype.parseImage = function(request){
-  var fileStr = _.last(request.path.split('/'));
+  var fileStr = _.last(request.path.replace(/%20/g,' ').split('/'));
 
   // clean out any metadata format
   fileStr = fileStr.replace(/.json$/, '');
@@ -77,7 +77,7 @@ Image.prototype.parseImage = function(request){
 
 // Determine the file path for the requested image
 Image.prototype.parseUrl = function(request){
-  var parts = request.path.replace(/^\//,'').split('/');
+  var parts = request.path.replace(/%20/g,' ').replace(/^\//,'').split('/');
 
   // overwrite the image name with the parsed version so metadata requests do
   // not mess things up
