@@ -17,6 +17,9 @@ var express = require('express'),
 app.directory = __dirname;
 ir.expressConfig(app);
 
+app.get('/favicon.ico', function () {
+  // do nothing for favicon requests
+});
 
 /**
 Return the modifiers map as a documentation endpoint
@@ -53,7 +56,8 @@ app.get('/*?', function(request, response){
 
   image.getFile()
     .pipe(new streams.identify())
-    .pipe(new streams.resize())
+    // .pipe(new streams.resize())
+    .pipe(new streams.resizeSharp())
     .pipe(new streams.filter())
     .pipe(new streams.optimize())
     .pipe(streams.response(request, response));
