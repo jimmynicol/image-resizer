@@ -99,6 +99,9 @@ Image.prototype.parseUrl = function(request){
     parts.shift();
     this.path = parts.join('/');
   }
+
+  // account for any spaces in the path
+  this.path = decodeURI(this.path);
 };
 
 
