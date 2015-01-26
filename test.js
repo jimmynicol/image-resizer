@@ -17,8 +17,8 @@ var express = require('express'),
 app.directory = __dirname;
 ir.expressConfig(app);
 
-app.get('/favicon.ico', function () {
-  // do nothing for favicon requests
+app.get('/favicon.ico', function (request, response) {
+  response.status(404);
 });
 
 /**
