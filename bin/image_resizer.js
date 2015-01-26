@@ -68,8 +68,9 @@ function createApplicationAt(dir){
   // create a new package.json
   newPkg = {
     name: appName,
-    version: '0.0.1',
+    version: '1.0.0',
     main: 'index.js',
+    description: 'My awesome image resizing service!',
     engines: {
       'node': pkg.engines.node
     },
@@ -82,10 +83,16 @@ function createApplicationAt(dir){
     devDependencies: pkg.devDependencies
   };
 
+  if (program.engine === 'sharp') {
+    newPkg.dependencies.sharp = pkg.dependencies.sharp;
+  }
+
   write(dir + '/package.json', JSON.stringify(newPkg, null, 2));
 
   // create index.js
-  copy(__dirname + '/./templates/index.js.tmpl', dir + '/index.js');
+  var engine = program.engine === 'gm' ? 'gm' : 'sharp';
+  var indexTmpl = fs.readFileSync(__dirname + '/./templates/index.js.tmpl');
+  write(dir + '/index.js', _.template(indexTmpl, { engine: engine }));
 
   // create the gulpfile
   copy(__dirname + '/./templates/gulpfile.js.tmpl', dir + '/gulpfile.js');
@@ -104,6 +111,8 @@ function createApplicationAt(dir){
   copy(__dirname + '/./templates/.buildpacks.tmpl', dir + '/.buildpacks');
   copy(__dirname + '/./templates/Procfile.tmpl', dir + '/Procfile');
 
+  // create a README
+  copy(__dirname + '/./templates/README.md.tmpl', dir + '/README.md');
 
   // create plugin folders
   //  - sources
@@ -117,14 +126,16 @@ Create the program and list the possible commands
 */
 program.version(pkg.version);
 program.option('-f, --force', 'force app build in an non-empty directory');
+program.option('-e, --engine <engine>', 'chose the resize engine (gm|sharp)');
 program.command('new')
   .description('Create new clean image-resizer app')
-  .action(function(){
+  .action( function () {
     var path = '.';
-    emptyDirectory(path, function(empty){
+    emptyDirectory(path, function(empty) {
       if (empty || program.force){
         createApplicationAt(path);
-      } else {
+      }
+      else {
         console.log(
           chalk.red('\n    The current directory is not empty, please use the force (-f) option to proceed.\n')
         );
@@ -133,7 +144,7 @@ program.command('new')
   });
 program.command('filter <name>')
   .description('Create new filter stream')
-  .action(function(filterName){
+  .action( function (filterName) {
     copy(__dirname + '/./templates/filter.js.tmpl', './plugins/filters/' + filterName + '.js');
   });
 program.parse(process.argv);
