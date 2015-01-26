@@ -37,8 +37,6 @@ module.exports = function () {
         image.contents = buffer;
       }
 
-      console.log(image.contents, image.isBuffer());
-
       image.log.timeEnd('resize');
       callback(null, image);
     };

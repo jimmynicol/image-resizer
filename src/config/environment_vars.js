@@ -30,6 +30,8 @@ vars = {
   PNG_OPTIMIZER: 'pngquant',
   PNG_OPTIMIZATION: 2,
   GIF_INTERLACED: true,
+  IMAGE_QUALITY: 60,
+  IMAGE_PROGRESSIVE: true,
 
   // Cache expiries
   IMAGE_EXPIRY: 60 * 60 * 24 * 90,

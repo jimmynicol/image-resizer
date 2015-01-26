@@ -51,7 +51,7 @@
     "connect-livereload": "~0.3.2",
     "dotenv": "~0.2.8",
     "ejs": "~1.0.0",
-    "gulp": "^3.6.2",
+    "gulp": "^3.8.10",
     "gulp-bump": "^0.1.8",
     "gulp-jshint": "~1.4.2",
     "gulp-mocha": "~0.4.1",
