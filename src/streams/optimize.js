@@ -14,20 +14,12 @@ function optimize(image, callback){
   imgmin = new Imagemin()
     .src(image.contents)
     .use(Imagemin.gifsicle(env.GIF_INTERLACED))
-    .use(Imagemin.jpegtran(env.JPEG_PROGRESSIVE));
-
-  switch(env.PNG_OPTIMIZER){
-  case 'pngquant':
-    imgmin.use(Imagemin.pngquant());
-    break;
-  case 'optipng':
-    imgmin.use(Imagemin.optipng(env.PNG_OPTIMIZATION));
-    break;
-  }
+    .use(Imagemin.jpegtran(env.JPEG_PROGRESSIVE))
+    .use(Imagemin.optipng(env.PNG_OPTIMIZATION));
 
   image.log.time('optimize:' + image.format);
 
-  imgmin.optimize(function(err, data){
+  imgmin.run(function(err, files){
     image.log.timeEnd('optimize:' + image.format);
 
     if (err){
@@ -35,7 +27,7 @@ function optimize(image, callback){
       image.error = new Error(err);
       callback(null, image);
     } else {
-      image.contents = data.contents;
+      image.contents = files[0].contents;
       callback(null, image);
     }
   });
