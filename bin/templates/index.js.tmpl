@@ -13,6 +13,9 @@ streams = ir.streams;
 app.directory = __dirname;
 ir.expressConfig(app);
 
+app.get('/favicon.ico', function () {
+  // do nothing for favicon requests
+});
 
 /**
 Return the modifiers map as a documentation endpoint

@@ -43,7 +43,6 @@
     "morgan": "^1.0.1",
     "request": "~2.34.0",
     "sharp": "^0.8.3",
-    "static-favicon": "^2.0.0-alpha",
     "twit": "~1.1.15"
   },
   "devDependencies": {
