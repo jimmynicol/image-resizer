@@ -85,7 +85,8 @@ Image.prototype.parseUrl = function(request){
 
   // if the request is for no modification or metadata then assume the s3path
   // is the entire request path
-  if (_.indexOf(['original', 'json'], this.modifiers.action) > -1){
+  console.log(this.modifiers.action, 'modifiers');
+  if (_.indexOf(['original', 'json', 'resizeOriginal'], this.modifiers.action) > -1){
     if (this.modifiers.external){
       parts.shift();
       this.path = parts.join('/');

@@ -57,6 +57,7 @@ module.exports = function(){
     }
 
     switch(image.modifiers.action){
+    case 'resizeOriginal':
     case 'resize':
       r.resize(image.modifiers.width, image.modifiers.height);
       r.stream(streamResponse);

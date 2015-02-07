@@ -46,7 +46,7 @@ Crop modifiers:
 
 
 var _, string, filters, sources, filterKeys, sourceKeys, modifierMap,
-    modKeys, env, fs, namedModifierMap;
+    modKeys, env, environment, fs, namedModifierMap;
 
 _          = require('lodash');
 string     = require('../utils/string');
@@ -54,7 +54,7 @@ filters    = require('../streams/filters');
 sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
 sourceKeys = _.keys(sources);
-env        = require('../config/environment_vars');
+environment = require('../config/environment_vars');
 fs         = require('fs');
 
 
@@ -103,7 +103,7 @@ modifierMap = [
     desc: 'external',
     type: 'string',
     values: sourceKeys,
-    default: env.DEFAULT_SOURCE
+    default: environment.DEFAULT_SOURCE
   },
   {
     key: 'f',
@@ -208,11 +208,53 @@ function parseModifiers(mods, modArr) {
   return mods;
 }
 
+/**
+ * @param {Object} mods
+ * @return {Object} mods with limited width /height
+ */
+var limitMaxDimension = function(mods, env){
+  // check to see if
+  // a max image dimension has been specified
+  // and limits the current dimension to that maximum
+  var limitDimension = function(dimension, mods){
+    if(!env.MAX_IMAGE_DIMENSION){
+      return mods;
+    }
+    var maxDimension = parseInt(env.MAX_IMAGE_DIMENSION, 10);
+    if(dimension in mods && mods[dimension] > 0){
+      mods[dimension] = Math.min(maxDimension, mods[dimension]);
+    }else{
+      mods[dimension] = maxDimension;
+    }
+    if(mods.action === 'original'){
+      // override to 'resizeOriginal' type
+      mods.action = 'resizeOriginal';
+    }
+    return mods;
+  };
+
+  // limit height and width
+  // in the mods
+  mods = limitDimension(
+    'width',
+    limitDimension(
+      'height', mods
+    )
+  );
+  return mods;
+};
 
 // Exposed method to parse an incoming URL for modifiers, can add a map of
 // named (preset) modifiers if need be (mostly just for unit testing). Named
 // modifiers are usually added via config json file in root of application.
-exports.parse = function(requestUrl, namedMods){
+exports.parse = function(requestUrl, namedMods, envOverride){
+  // override 'env' for testing
+  if(typeof envOverride !== 'undefined'){
+    env = _.clone(envOverride);
+  }else{
+    env = _.clone(environment);
+  }
+
   var segments, mods, modStr, image, gravity, crop;
 
   gravity   = getModifier('g');
@@ -253,6 +295,7 @@ exports.parse = function(requestUrl, namedMods){
     mods = parseModifiers(mods, modStr.split('-'));
   }
 
+
   // check to see if this a metadata call, it trumps all other requested mods
   if (image.slice(-5) === '.json'){
     mods.action = 'json';
@@ -262,7 +305,7 @@ exports.parse = function(requestUrl, namedMods){
   if (mods.action === 'square'){
     // make sure crop is set to the default
     mods.crop = 'fill';
-    return mods;
+    return limitMaxDimension(mods, env);
   }
 
   if (mods.height !== null || mods.width !== null){
@@ -279,5 +322,5 @@ exports.parse = function(requestUrl, namedMods){
     }
   }
 
-  return mods;
+  return limitMaxDimension(mods, env);
 };
