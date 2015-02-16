@@ -13,7 +13,7 @@ streams = ir.streams;
 app.directory = __dirname;
 ir.expressConfig(app);
 
-app.get('/favicon.ico', function (request, response) {
+app.get('/favicon.ico', function (request) {
   request.status(404);
 });
 
