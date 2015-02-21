@@ -1,8 +1,10 @@
 'use strict';
 
 var chai   = require('chai'),
+    _ = require('lodash'),
     expect = chai.expect,
     sm     = require('sandboxed-module'),
+    env    = require('../../../src/config/environment_vars'),
     mod    = require('../../../src/lib/modifiers');
 
 chai.should();
@@ -37,6 +39,15 @@ describe('Modifiers module', function(){
       request = '/h500-gne/path/to/image.jpg';
       mod.parse(request).action.should.not.equal('original');
     });
+
+    it("Should add in a width parameter if MAX_IMAGE_DIMENSION specified", function(){
+        var request = '/path/to/image.png';
+        // override max image width environment variable
+        var localEnv = _.clone(env);
+        localEnv.MAX_IMAGE_DIMENSION = '500';
+        mod.parse(request, undefined, localEnv).width.should.equal(500);
+        mod.parse(request, undefined, localEnv).height.should.equal(500);
+    });
   });
 
 
@@ -66,6 +77,18 @@ describe('Modifiers module', function(){
       var request = '/h400-w600-gse/path/to/image.jpg';
       mod.parse(request).action.should.equal('crop');
     });
+    it('should limit the parameter width to the MAX_IMAGE_DIMENSION if set', function(){
+      var request = '/h400-w600-gse/path/to/image.jpg';
+      var localEnv = _.clone(env);
+      localEnv.MAX_IMAGE_DIMENSION = '500';
+      mod.parse(request, undefined, localEnv).width.should.equal(500);
+    });
+    it('should set the width to original parameter width if less than the MAX_IMAGE_DIMENSION', function(){
+      var request = '/h400-w600-gse/path/to/image.jpg';
+      var localEnv = _.clone(env);
+      localEnv.MAX_IMAGE_DIMENSION = '700';
+      mod.parse(request, undefined, localEnv).width.should.equal(600);
+    });
   });
 
 
@@ -81,7 +104,6 @@ describe('Modifiers module', function(){
       mod.parse(request).height.should.equal(500);
       mod.parse(request).width.should.equal(500);
     });
-
     it('should not allow a crop value other than the fill', function(){
       var request = '/s500-gne-cfill/image.jpg';
       mod.parse(request).crop.should.equal('fill');

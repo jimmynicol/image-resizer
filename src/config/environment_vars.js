@@ -25,6 +25,11 @@ vars = {
   AUTO_ORIENT: true,
   REMOVE_METADATA: true,
 
+  // Protect original files
+  // by specifying a max image width
+  // or height - limits max height/width in parameters
+  MAX_IMAGE_DIMENSION: null,
+
   // Optimization options
   JPEG_PROGRESSIVE: true,
   PNG_OPTIMIZER: 'pngquant',
