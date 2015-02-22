@@ -20,7 +20,7 @@ module.exports = function () {
       return callback(null, image);
     }
 
-    image.log.time('optimize:' + image.format);
+    image.log.time('optimize-sharp:' + image.format);
 
     var r = sharp(image.contents);
 
@@ -41,7 +41,7 @@ module.exports = function () {
         image.contents = buffer;
       }
 
-      image.log.timeEnd('optimize:' + image.format);
+      image.log.timeEnd('optimize-sharp:' + image.format);
       callback(null, image);
     });
   });

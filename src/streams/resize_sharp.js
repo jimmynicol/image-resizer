@@ -43,10 +43,17 @@ module.exports = function () {
 
     var r = sharp(image.contents);
 
+    // never enlarge an image beyonds its original size
+    r.withoutEnlargement();
+
+    // if allowed auto rotate images, very helpful for photos off of an iphone
+    // which are landscape by default and the metadata tells them what to show.
     if (env.AUTO_ORIENT) {
       r.rotate();
     }
 
+    // by default we remove the metadata from resized images, setting the env
+    // var to false can retain it.
     if (!env.REMOVE_METADATA) {
       r.withMetadata();
     }
@@ -54,6 +61,10 @@ module.exports = function () {
     var d, wd, ht;
 
     switch(image.modifiers.action){
+    case 'original' :
+      r.toBuffer(resizeResponse);
+      break;
+
     case 'resize':
       r.resize(image.modifiers.width, image.modifiers.height);
       r.toBuffer(resizeResponse);
@@ -121,7 +132,7 @@ module.exports = function () {
             wd,
             ht
           );
-          r.extract(wd, ht, d.x, d.y);
+          r.extract(d.y, d.x, wd, ht);
           break;
         case 'scale':
           // TODO: deal with scale
@@ -133,8 +144,6 @@ module.exports = function () {
       });
 
       break;
-
-
     }
   });
 

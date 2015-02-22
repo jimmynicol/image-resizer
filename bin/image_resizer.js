@@ -12,6 +12,7 @@ path    = require('path');
 chalk   = require('chalk');
 pkg     = require('../package.json');
 _       = require('lodash');
+exec    = require('child_process').exec;
 
 /**
 File/Directory helper functions
@@ -63,6 +64,15 @@ function createApplicationAt(dir){
     console.log(chalk.green('   then run the app') + ':');
     console.log('     $ gulp watch');
     console.log();
+
+    exec('vips --version', function (err, stdout, stderr) {
+      if (err || stderr) {
+        console.log();
+        console.log(chalk.green('   looks like vips is also missing') + ':');
+        console.log('     $ ./node_modules/sharp/preinstall.sh');
+        console.log();
+      }
+    });
   });
 
   // create a new package.json

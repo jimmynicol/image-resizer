@@ -11,21 +11,37 @@ var express = require('express'),
     ir = require('./index'),
     env = ir.env,
     Img = ir.img,
-    streams = ir.streams;
+    streams = ir.streams,
+    chalk = require('chalk'),
+    exec = require('child_process').exec;
 
+// check to see if vips is installed
+exec ('vips --version', function (err, stdout, stderr) {
+  if (err || stderr) {
+    console.error(
+      chalk.red('\nMissing dependency:'),
+      chalk.red.bold('libvips')
+    );
+
+    console.log(
+      chalk.cyan('  to install vips on your system run:'),
+      chalk.bold('./node_modules/sharp/preinstall.sh\n')
+    );
+  }
+});
 
 app.directory = __dirname;
 ir.expressConfig(app);
 
 app.get('/favicon.ico', function (request, response) {
-  response.status(404);
+  response.sendStatus(404);
 });
 
 /**
 Return the modifiers map as a documentation endpoint
 */
 app.get('/modifiers.json', function(request, response){
-  response.status(200).json(ir.modifiers);
+  response.json(ir.modifiers);
 });
 
 
@@ -38,10 +54,20 @@ if (env.development){
     response.render('index.html');
   });
 
+  app.get('/test-page2', function(request, response){
+    response.render('index2.html');
+  });
+
   // Show the environment variables and their current values
   app.get('/env', function(request, response){
     response.status(200).json(env);
   });
+}
+
+
+function useSharp (request) {
+  // return true;
+  return request.query.hasOwnProperty('sharp');
 }
 
 
@@ -56,7 +82,7 @@ app.get('/*?', function(request, response){
   var stream = image.getFile().pipe(new streams.identify());
 
   // via query string use the sharp or gm engine
-  if (request.query.hasOwnProperty('sharp')) {
+  if (useSharp(request)) {
     image.log.log('engine:', image.log.colors.bold('sharp'));
     stream = stream.pipe(new streams.resizeSharp());
   } else {
@@ -66,7 +92,7 @@ app.get('/*?', function(request, response){
 
   stream = stream.pipe(new streams.filter());
 
-  if (request.query.hasOwnProperty('sharp')) {
+  if (useSharp(request)) {
     stream = stream.pipe(new streams.optimizeSharp());
   } else {
     stream = stream.pipe(new streams.optimize());

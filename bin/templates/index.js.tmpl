@@ -9,19 +9,39 @@ env     = ir.env;
 Img     = ir.img;
 streams = ir.streams;
 
+if (env.development) {
+  var exec = require('child_process').exec;
+  var chalk = require('chalk');
+
+  // check to see if vips is installed
+  exec ('vips --version', function (err, stdout, stderr) {
+    if (err || stderr) {
+      console.error(
+        chalk.red('\nMissing dependency:'),
+        chalk.red.bold('libvips')
+      );
+      console.log(
+        chalk.cyan('  to install vips on your system run:'),
+        chalk.bold('./node_modules/sharp/preinstall.sh\n')
+      );
+    }
+  });
+}
+
+
 
 app.directory = __dirname;
 ir.expressConfig(app);
 
 app.get('/favicon.ico', function (request) {
-  request.status(404);
+  request.sendStatus(404);
 });
 
 /**
 Return the modifiers map as a documentation endpoint
 */
 app.get('/modifiers.json', function(request, response){
-  response.status(200).json(ir.modifiers);
+  response.json(ir.modifiers);
 });
 
 
@@ -36,7 +56,7 @@ if (env.development){
 
   // Show the environment variables and their current values
   app.get('/env', function(request, response){
-    response.status(200).json(env);
+    response.json(env);
   });
 }
 
@@ -52,9 +72,9 @@ app.get('/*?', function(request, response){
 
   image.getFile()
     .pipe(new streams.identify())
-    <% if (engine === 'sharp') { %>.pipe(new streams.resizeSharp())<% } else { %>.pipe(new streams.resize())<% } %>
+    .pipe(new streams.resizeSharp())
     .pipe(new streams.filter())
-    <% if (engine === 'sharp') { %>.pipe(new streams.optimizeSharp())<% } else { %>.pipe(new streams.optimize())<% } %>
+    .pipe(new streams.optimizeSharp())
     .pipe(streams.response(request, response));
 });
 
