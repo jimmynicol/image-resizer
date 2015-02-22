@@ -2,7 +2,7 @@
 
 'use strict';
 
-var program, path, fs, mkdirp, pkg, chalk, _;
+var program, path, fs, mkdirp, pkg, chalk, _, exec;
 
 
 program = require('commander');
@@ -18,7 +18,7 @@ exec    = require('child_process').exec;
 File/Directory helper functions
 */
 function write(path, str, mode) {
-  fs.writeFile(path, str, { mode: mode || '0666' });
+  fs.writeFileSync(path, str, { mode: mode || '0666' });
   console.log('    ' + chalk.green('create') + ': ' + path);
 }
 
@@ -27,15 +27,8 @@ function copy(from, to) {
 }
 
 function mkdir(path, fn) {
-  mkdirp(path, '0755', function(err){
-    if (err) {
-      throw err;
-    }
-    console.log('    ' + chalk.green('create') + ': ' + path);
-    if (typeof fn === 'function'){
-      fn();
-    }
-  });
+  mkdirp.sync(path, '0755');
+  console.log('    ' + chalk.green('create') + ': ' + path);
 }
 
 function emptyDirectory(path, fn) {
@@ -55,25 +48,6 @@ function createApplicationAt(dir){
 
   console.log('\n' + chalk.cyan('Creating new ') + chalk.cyan.bold('image-resizer') + chalk.cyan(' app!'));
   console.log();
-
-  process.on('exit', function(){
-    console.log();
-    console.log(chalk.green('   now install your dependencies') + ':');
-    console.log('     $ npm install');
-    console.log();
-    console.log(chalk.green('   then run the app') + ':');
-    console.log('     $ gulp watch');
-    console.log();
-
-    exec('vips --version', function (err, stdout, stderr) {
-      if (err || stderr) {
-        console.log();
-        console.log(chalk.green('   looks like vips is also missing') + ':');
-        console.log('     $ ./node_modules/sharp/preinstall.sh');
-        console.log();
-      }
-    });
-  });
 
   // create a new package.json
   newPkg = {
@@ -130,6 +104,27 @@ function createApplicationAt(dir){
   //  - filters
   mkdir(dir + '/plugins/sources');
   mkdir(dir + '/plugins/filters');
+
+
+  console.log();
+  console.log(chalk.green('   now install your dependencies') + ':');
+  console.log('     $ npm install');
+  console.log();
+  console.log(chalk.green('   then to run the app locally') + ':');
+  console.log('     $ gulp watch');
+  console.log();
+
+  exec('vips --version', function (err, stdout, stderr) {
+    if (err || stderr) {
+      console.log(chalk.yellow('   looks like vips is also missing, run the following to install') + ':');
+      console.log('     $ ./node_modules/image_resizer/node_modules/sharp/preinstall.sh');
+      console.log();
+    }
+
+    console.log(chalk.yellow('   to get up and running on Heroku') + ':');
+    console.log('     https://devcenter.heroku.com/articles/getting-started-with-nodejs#introduction');
+    console.log();
+  });
 }
 
 /**
