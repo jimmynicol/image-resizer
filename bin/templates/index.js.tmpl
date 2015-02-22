@@ -33,8 +33,8 @@ if (env.development) {
 app.directory = __dirname;
 ir.expressConfig(app);
 
-app.get('/favicon.ico', function (request) {
-  request.sendStatus(404);
+app.get('/favicon.ico', function (request, response) {
+  response.sendStatus(404);
 });
 
 /**
