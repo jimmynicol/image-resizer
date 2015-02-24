@@ -63,6 +63,7 @@ function createApplicationAt(dir){
       'image-resizer': 'git://github.com/jimmynicol/image-resizer.git#sharp',
       'express': pkg.dependencies.express,
       'lodash': pkg.dependencies.lodash,
+      'chalk': pkg.dependencies.chalk,
       'gm': pkg.dependencies.gm
     },
     devDependencies: pkg.devDependencies
