@@ -43,7 +43,9 @@ Facebook.prototype._read = function(){
     return this.push(null);
   }
 
-  url = 'https://graph.facebook.com/' + this.image.image.split('.')[0] + '/picture?type=large';
+  var fbUid = this.image.image.split('.').slice(0,-1).join('.');
+
+  url = 'https://graph.facebook.com/' + fbUid + '/picture?type=large';
 
   this.image.log.time('facebook');
 
