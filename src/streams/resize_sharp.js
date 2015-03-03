@@ -67,6 +67,7 @@ module.exports = function () {
 
     case 'resize':
       r.resize(image.modifiers.width, image.modifiers.height);
+      r.max();
       r.toBuffer(resizeResponse);
       break;
 
@@ -107,6 +108,7 @@ module.exports = function () {
         switch(image.modifiers.crop){
         case 'fit':
           r.resize(image.modifiers.width, image.modifiers.height);
+          r.max();
           break;
         case 'fill':
           d = dims.cropFill(image.modifiers, size);
