@@ -205,7 +205,7 @@ It is possible to bring images in from external sources and store them behind yo
 
 It is worth noting that Twitter requires a full set of credentials as you need to poll their API in order to return profile pics.
 
-A shorter expiry on images from social sources can also be set via `SOCIAL_IMAGE_EXPIRY` env var so they expiry at a faster rate than other images.
+A shorter expiry on images from social sources can also be set via `IMAGE_EXPIRY_SHORT` env var so they expiry at a faster rate than other images.
 
 It is also trivial to write new source streams via the plugins directory. Examples are in `src/streams/sources/`.
 
