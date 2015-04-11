@@ -1,6 +1,6 @@
 {
   "name": "image-resizer",
-  "version": "0.10.1",
+  "version": "1.0.0",
   "description": "On-the-fly image resizing and optimization using node and sharp (libvips). Heroku ready!",
   "main": "index.js",
   "scripts": {
