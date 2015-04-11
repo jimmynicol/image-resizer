@@ -1,7 +1,7 @@
 {
   "name": "image-resizer",
   "version": "0.10.1",
-  "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
+  "description": "On-the-fly image resizing and optimization using node and sharp (libvips). Heroku ready!",
   "main": "index.js",
   "scripts": {
     "test": "gulp test"
@@ -10,7 +10,8 @@
     "image",
     "resize",
     "node",
-    "graphicsmagick",
+    "sharp",
+    "libvips",
     "heroku",
     "optimization"
   ],
@@ -24,7 +25,7 @@
     "image-resizer": "./bin/image_resizer.js"
   },
   "engines": {
-    "node": ">=0.10.36"
+    "node": "0.12.x"
   },
   "dependencies": {
     "aws-sdk": "~2.0.0-rc9",
