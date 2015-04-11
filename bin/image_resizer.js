@@ -59,26 +59,19 @@ function createApplicationAt(dir){
       'node': pkg.engines.node
     },
     dependencies: {
-      // 'image-resizer': '~' + pkg.version,
-      'image-resizer': 'git://github.com/jimmynicol/image-resizer.git#sharp',
+      'image-resizer': '~' + pkg.version,
       'express': pkg.dependencies.express,
       'lodash': pkg.dependencies.lodash,
-      'chalk': pkg.dependencies.chalk,
-      'gm': pkg.dependencies.gm
+      'chalk': pkg.dependencies.chalk
     },
     devDependencies: pkg.devDependencies
   };
 
-  if (program.engine === 'sharp') {
-    newPkg.dependencies.sharp = pkg.dependencies.sharp;
-  }
-
   write(dir + '/package.json', JSON.stringify(newPkg, null, 2));
 
   // create index.js
-  var engine = program.engine === 'gm' ? 'gm' : 'sharp';
   var indexTmpl = fs.readFileSync(__dirname + '/./templates/index.js.tmpl');
-  write(dir + '/index.js', _.template(indexTmpl, { engine: engine }));
+  write(dir + '/index.js', _.template(indexTmpl));
 
   // create the gulpfile
   copy(__dirname + '/./templates/gulpfile.js.tmpl', dir + '/gulpfile.js');
@@ -133,7 +126,6 @@ Create the program and list the possible commands
 */
 program.version(pkg.version);
 program.option('-f, --force', 'force app build in an non-empty directory');
-program.option('-e, --engine <engine>', 'chose the resize engine (gm|sharp)');
 program.command('new')
   .description('Create new clean image-resizer app')
   .action( function () {
