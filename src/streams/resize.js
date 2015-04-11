@@ -1,17 +1,14 @@
 'use strict';
 
-var gm, env, dims, map;
-
-gm   = require('gm');
-env  = require('../config/environment_vars');
-dims = require('../lib/dimensions');
-map  = require('map-stream');
+var sharp = require('sharp');
+var map   = require('map-stream');
+var env   = require('../config/environment_vars');
+var dims  = require('../lib/dimensions');
 
 
-module.exports = function(){
+module.exports = function () {
 
-  return map( function(image, callback){
-    var d, wd, ht;
+  return map( function(image, callback) {
 
     // do nothing if there is an error on the image object
     if (image.isError()){
@@ -29,69 +26,79 @@ module.exports = function(){
       return callback(null, image);
     }
 
-    // handle the stream response for any of the resizing actions
-    var streamResponse = function(err, data){
+    image.log.time('resize');
+
+    var resizeResponse = function (err, buffer) {
       if (err) {
         image.log.error('resize error', err);
         image.error = new Error(err);
-      } else {
-        image.contents = data;
       }
+      else {
+        image.contents = buffer;
+      }
+
       image.log.timeEnd('resize');
       callback(null, image);
     };
 
-    image.log.time('resize');
+    var r = sharp(image.contents);
 
-    // create the gm stream
-    var r = gm(image.contents, image.format);
+    // never enlarge an image beyonds its original size
+    r.withoutEnlargement();
 
-    // auto orient the image, so it is always the correct way up
-    if (env.AUTO_ORIENT){
-      r.autoOrient();
+    // if allowed auto rotate images, very helpful for photos off of an iphone
+    // which are landscape by default and the metadata tells them what to show.
+    if (env.AUTO_ORIENT) {
+      r.rotate();
     }
 
-    // remove any image metadata
-    if (env.REMOVE_METADATA){
-      r.noProfile();
+    // by default we remove the metadata from resized images, setting the env
+    // var to false can retain it.
+    if (!env.REMOVE_METADATA) {
+      r.withMetadata();
     }
+
+    var d, wd, ht;
 
     switch(image.modifiers.action){
-    case 'resizeOriginal':
+    case 'original' :
+      r.toBuffer(resizeResponse);
+      break;
+
     case 'resize':
       r.resize(image.modifiers.width, image.modifiers.height);
-      r.stream(streamResponse);
+      r.max();
+      r.toBuffer(resizeResponse);
       break;
 
     case 'square':
-      r.size(function(err, size){
+      r.metadata(function(err, metadata){
         if (err){
           image.error = new Error(err);
           callback(null, image);
           return;
         }
 
-        d = dims.cropFill(image.modifiers, size);
+        d = dims.cropFill(image.modifiers, metadata);
 
         // resize then crop the image
         r.resize(
             d.resize.width,
             d.resize.height
-          ).crop(
-            d.crop.width,
-            d.crop.height,
+          ).extract(
+            d.crop.y,
             d.crop.x,
-            d.crop.y
+            d.crop.width,
+            d.crop.height
           );
 
-        // send the stream to the completion handler
-        r.stream(streamResponse);
+        r.toBuffer(resizeResponse);
       });
 
       break;
 
     case 'crop':
-      r.size(function(err, size){
+      r.metadata(function(err, size){
         if (err){
           image.error = new Error(err);
           callback(null, image);
@@ -101,20 +108,19 @@ module.exports = function(){
         switch(image.modifiers.crop){
         case 'fit':
           r.resize(image.modifiers.width, image.modifiers.height);
+          r.max();
           break;
         case 'fill':
           d = dims.cropFill(image.modifiers, size);
 
-          // TODO: need to account for null height or width
-
           r.resize(
               d.resize.width,
               d.resize.height
-            ).crop(
-              d.crop.width,
-              d.crop.height,
+            ).extract(
+              d.crop.y,
               d.crop.x,
-              d.crop.y
+              d.crop.width,
+              d.crop.height
             );
           break;
         case 'cut':
@@ -128,23 +134,18 @@ module.exports = function(){
             wd,
             ht
           );
-          r.crop(wd, ht, d.x, d.y);
+          r.extract(d.y, d.x, wd, ht);
           break;
         case 'scale':
-          r.resize(image.modifiers.width, image.modifiers.height, '!');
+          // TODO: deal with scale
+          r.resize(image.modifiers.width, image.modifiers.height);
           break;
         }
 
-        r.stream(streamResponse);
+        r.toBuffer(resizeResponse);
       });
 
       break;
-
-
-    case 'original' :
-      r.toBuffer(streamResponse);
-      break;
-
     }
   });
 

@@ -64,13 +64,6 @@ if (env.development){
   });
 }
 
-
-function useSharp (request) {
-  // return true;
-  return request.query.hasOwnProperty('sharp');
-}
-
-
 /*
 Return an image modified to the requested parameters
   - request format:
@@ -79,24 +72,11 @@ Return an image modified to the requested parameters
 */
 app.get('/*?', function(request, response){
   var image = new Img(request);
+
   var stream = image.getFile().pipe(new streams.identify());
-
-  // via query string use the sharp or gm engine
-  if (useSharp(request)) {
-    image.log.log('engine:', image.log.colors.bold('sharp'));
-    stream = stream.pipe(new streams.resizeSharp());
-  } else {
-    image.log.log('engine:', image.log.colors.bold('gm'));
-    stream = stream.pipe(new streams.resize());
-  }
-
+  stream = stream.pipe(new streams.resize());
   stream = stream.pipe(new streams.filter());
-
-  if (useSharp(request)) {
-    stream = stream.pipe(new streams.optimizeSharp());
-  } else {
-    stream = stream.pipe(new streams.optimize());
-  }
+  stream = stream.pipe(new streams.optimize());
 
   stream.pipe(streams.response(request, response));
 });

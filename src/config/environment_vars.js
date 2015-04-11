@@ -31,11 +31,6 @@ vars = {
   MAX_IMAGE_DIMENSION: null,
 
   // Optimization options
-  JPEG_PROGRESSIVE: true,
-  PNG_OPTIMIZER: 'pngquant',
-  PNG_OPTIMIZATION: 2,
-  GIF_INTERLACED: true,
-  IMAGE_QUALITY: 80,
   IMAGE_PROGRESSIVE: true,
 
   // Cache expiries
@@ -57,7 +52,10 @@ vars = {
   TWITTER_ACCESS_TOKEN_SECRET: null,
 
   // Where are the local files kept?
-  LOCAL_FILE_PATH: process.cwd()
+  LOCAL_FILE_PATH: process.cwd(),
+
+  // Display an image if a 404 request is encountered from a source
+  IMAGE_404: null
 
 };
 

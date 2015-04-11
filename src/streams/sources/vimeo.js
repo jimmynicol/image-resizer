@@ -1,11 +1,9 @@
 'use strict';
 
-var stream, util, request, env;
-
-stream  = require('stream');
-util    = require('util');
-request = require('request');
-env     = require('../../config/environment_vars');
+var stream  = require('stream');
+var util    = require('util');
+var request = require('request');
+var env     = require('../../config/environment_vars');
 
 
 function contentLength(bufs){
@@ -66,11 +64,9 @@ Vimeo.prototype._read = function(){
       imageUrl = imageUrl.replace('_640.jpg', '');
 
       imgStream = request.get(imageUrl);
-      imgStream.on('data', function(d){ bufs.push(d); });
-      imgStream.on('error', function(err){
-        _this.image.error = new Error(err);
-      });
-      imgStream.on('end', function(){
+      imgStream.on('data',  function(d) { bufs.push(d); });
+      imgStream.on('error', function(err) { _this.image.error = err; });
+      imgStream.on('end',   function() {
         _this.image.log.timeEnd('vimeo');
         _this.image.contents = Buffer.concat(bufs);
         _this.image.originalContentLength = contentLength(bufs);

@@ -50,11 +50,9 @@ Youtube.prototype._read = function(){
   this.image.log.time('youtube');
 
   imgStream = request.get(url);
-  imgStream.on('data', function(d){ bufs.push(d); });
-  imgStream.on('error', function(err){
-    _this.image.error = new Error(err);
-  });
-  imgStream.on('end', function(){
+  imgStream.on('data',  function(d) { bufs.push(d); });
+  imgStream.on('error', function(err) { _this.image.error = err; });
+  imgStream.on('end',   function() {
     _this.image.log.timeEnd('youtube');
     _this.image.contents = Buffer.concat(bufs);
     _this.image.originalContentLength = contentLength(bufs);

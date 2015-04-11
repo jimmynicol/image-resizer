@@ -1,10 +1,7 @@
 'use strict';
 
-var gm, sharp, map;
-
-gm    = require('gm');
-sharp = require('sharp');
-map   = require('map-stream');
+var sharp = require('sharp');
+var map   = require('map-stream');
 
 
 module.exports = function(){
@@ -35,7 +32,7 @@ module.exports = function(){
     };
 
     image.log.time('identify');
-    // gm(image.contents, image.format).identify(handleResponse);
+
     sharp(image.contents).metadata(handleResponse);
   });
 

@@ -71,7 +71,7 @@ function createApplicationAt(dir){
 
   // create index.js
   var indexTmpl = fs.readFileSync(__dirname + '/./templates/index.js.tmpl');
-  write(dir + '/index.js', _.template(indexTmpl));
+  write(dir + '/index.js', _.template(indexTmpl, {}));
 
   // create the gulpfile
   copy(__dirname + '/./templates/gulpfile.js.tmpl', dir + '/gulpfile.js');

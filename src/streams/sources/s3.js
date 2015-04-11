@@ -57,7 +57,7 @@ s3Stream.prototype._read = function(){
 
     // if there is an error store it on the image object and pass it along
     if (err) {
-      _this.image.error = new Error(err);
+      _this.image.error = err;
     }
 
     // if not store the image buffer
