@@ -50,11 +50,9 @@ Facebook.prototype._read = function(){
   this.image.log.time('facebook');
 
   fbStream = request.get(url);
-  fbStream.on('data', function(d){ bufs.push(d); });
-  fbStream.on('error', function(err){
-    _this.image.error = new Error(err);
-  });
-  fbStream.on('end', function(){
+  fbStream.on('data',  function(d){ bufs.push(d); });
+  fbStream.on('error', function(err){ _this.image.error = err; });
+  fbStream.on('end',   function(){
     _this.image.log.timeEnd('facebook');
     _this.image.contents = Buffer.concat(bufs);
     _this.image.originalContentLength = contentLength(bufs);

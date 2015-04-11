@@ -1,11 +1,9 @@
 'use strict';
 
-var stream, env, util, maxAge;
-
-stream = require('stream');
-env    = require('../config/environment_vars');
-util   = require('util');
-maxAge = 60 * 60 * 24 * 30; // 1 month
+var fs     = require('fs');
+var stream = require('stream');
+var env    = require('../config/environment_vars');
+var util   = require('util');
 
 
 function ResponseWriter(request, response){
@@ -48,7 +46,15 @@ ResponseWriter.prototype._write = function(image){
     image.log.error(image.error.message);
     image.log.flush();
     var statusCode = image.error.statusCode || 500;
-    this.response.status(statusCode).end();
+
+    if (statusCode === 404 && env.IMAGE_404) {
+      this.response.status(404);
+      fs.createReadStream(env.IMAGE_404).pipe(this.response);
+    }
+    else {
+      this.response.status(statusCode).end();
+    }
+
     return;
   }
 

@@ -8,6 +8,12 @@
     body {
       font-family: 'Open Sans', Helvetica;
     }
+    h1 {
+      border-bottom: 1px solid #bbb;
+    }
+    h1 pre {
+      display: inline;
+    }
     h2 {
       clear: both;
     }
@@ -20,9 +26,9 @@
 </head>
 <body>
 
-  <h2>Square</h2>
-  <p><a href="/elocal/test/sample_images/image1.jpg">Original</a></p>
+  <h1><pre>image-resizer</pre> test page</h1>
 
+  <h2>Square</h2>
   <div class="sample-img">
     <img src="/s200-elocal/test/sample_images/image1.jpg">
     <p>s200</p>
@@ -116,8 +122,8 @@
   <h2>Filters</h2>
 
   <div class="sample-img">
-    <img src="/w200-elocal-fsepia/test/sample_images/image3.png">
-    <p>w200-fsepia</p>
+    <img src="/w200-elocal-fgreyscale/test/sample_images/image3.png">
+    <p>w200-fgreyscale</p>
   </div>
 
 </body>

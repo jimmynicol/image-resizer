@@ -1,9 +1,7 @@
 'use strict';
 
-var gm, map;
-
-gm  = require('gm');
-map = require('map-stream');
+var sharp = require('sharp');
+var map   = require('map-stream');
 
 
 module.exports = function(){
@@ -19,21 +17,23 @@ module.exports = function(){
       return callback(null, image);
     }
 
+    var handleResponse = function (err, data) {
+      image.log.timeEnd('identify');
+
+      if (err) {
+        image.log.error('identify error', err);
+        image.error = new Error(err);
+      }
+      else {
+        image.contents = data;
+      }
+
+      callback(null, image);
+    };
+
     image.log.time('identify');
-    gm(image.contents, image.format)
-      .identify(function(err, data){
-        image.log.timeEnd('identify');
 
-        if (err) {
-          image.log.error('identify error', err);
-          image.error = new Error(err);
-        } else {
-          image.contents = data;
-        }
-
-        callback(null, image);
-      });
-
+    sharp(image.contents).metadata(handleResponse);
   });
 
 };

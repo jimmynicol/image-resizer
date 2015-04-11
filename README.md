@@ -9,7 +9,7 @@ The primary goal for this project was to abstract the need to set image dimensio
 
 Building and deploying your own version of `image-resizer` is as easy as running the cli tool (`image-resizer new`), setting your [Heroku configs](#environment-variables) and firing it up!
 
-Based on Express.js `image-resizer` uses [gm](https://github.com/aheckmann/gm) and [imagemin](https://github.com/imagemin/imagemin) under the hood to modify and optimise your images.
+Based on Express.js `image-resizer` uses [sharp](https://github.com/lovell/sharp) under the hood to modify and optimise your images.
 
 There is also a plugin architecture that allows you to add your own image sources. Out of the box it supports: S3, Facebook, Twitter, Youtube, Vimeo (and local file system in development mode).
 
@@ -77,60 +77,66 @@ For convenience in local and non-Heroku deployments the variables can be loaded 
 
 The available variables are as follows:
 
-    NODE_ENV: 'development',
-    PORT: 3001,
-    DEFAULT_SOURCE: 's3',
-    EXCLUDE_SOURCES: null, // add comma delimited list
+```javascript
+  NODE_ENV: 'development',
+  PORT: 3001,
+  DEFAULT_SOURCE: 's3',
+  EXCLUDE_SOURCES: null, // add comma delimited list
 
-    // Restrict to named modifiers strings only
-    NAMED_MODIFIERS_ONLY: false,
+  // Restrict to named modifiers strings only
+  NAMED_MODIFIERS_ONLY: false,
 
-    // AWS keys
-    AWS_ACCESS_KEY_ID: null,
-    AWS_SECRET_ACCESS_KEY: null,
-    AWS_REGION: null,
-    S3_BUCKET: null,
+  // AWS keys
+  AWS_ACCESS_KEY_ID: null,
+  AWS_SECRET_ACCESS_KEY: null,
+  AWS_REGION: null,
+  S3_BUCKET: null,
 
-    // Resize options
-    RESIZE_PROCESS_ORIGINAL: true,
-    AUTO_ORIENT: true,
-    REMOVE_METADATA: true,
+  // Resize options
+  RESIZE_PROCESS_ORIGINAL: true,
+  AUTO_ORIENT: true,
+  REMOVE_METADATA: true,
 
-    // Optimization options
-    JPEG_PROGRESSIVE: true,
-    PNG_OPTIMIZER: 'pngquant',
-    PNG_OPTIMIZATION: 2,
-    GIF_INTERLACED: true,
+  // Protect original files by specifying a max image width or height - limits
+  // max height/width in parameters
+  MAX_IMAGE_DIMENSION: null,
 
-    // Cache expiries
-    IMAGE_EXPIRY: 60 * 60 * 24 * 90,
-    IMAGE_EXPIRY_SHORT: 60 * 60 * 24 * 2,
-    JSON_EXPIRY: 60 * 60 * 24 * 30,
+  // Optimization options
+  IMAGE_QUALITY: 80,
+  IMAGE_PROGRESSIVE: true,
 
-    // Logging options
-    LOG_PREFIX: 'resizer',
-    QUEUE_LOG: true,
+  // Cache expiries
+  IMAGE_EXPIRY: 60 * 60 * 24 * 90,
+  IMAGE_EXPIRY_SHORT: 60 * 60 * 24 * 2,
+  JSON_EXPIRY: 60 * 60 * 24 * 30,
 
-    // Response settings
-    CACHE_DEV_REQUESTS: false,
+  // Logging options
+  LOG_PREFIX: 'resizer',
+  QUEUE_LOG: true,
 
-    // Twitter settings
-    TWITTER_CONSUMER_KEY: null,
-    TWITTER_CONSUMER_SECRET: null,
-    TWITTER_ACCESS_TOKEN: null,
-    TWITTER_ACCESS_TOKEN_SECRET: null,
+  // Response settings
+  CACHE_DEV_REQUESTS: false,
 
-    // Where are the local files kept?
-    LOCAL_FILE_PATH: process.cwd()
+  // Twitter settings
+  TWITTER_CONSUMER_KEY: null,
+  TWITTER_CONSUMER_SECRET: null,
+  TWITTER_ACCESS_TOKEN: null,
+  TWITTER_ACCESS_TOKEN_SECRET: null,
+
+  // Where are the local files kept?
+  LOCAL_FILE_PATH: process.cwd(),
+
+  // Display an image if a 404 request is encountered from a source
+  IMAGE_404: null
+```
 
 
 ## Optimization
 
-Optimization of images is done via [Imagemin](https://github.com/kevva/imagemin). Each image type optimizer is as follows:
+Optimization of images is done via [sharp](https://github.com/lovell/sharp#qualityquality). The variables to set are:
 
-* *.png*:  pngquant (default level of 2, configurable by `PNG_OPTIMIZATION`)
-* *.jpeg*: jpegtran (progressive by default, `JPEG_PROGRESSIVE`)
-* *.gif*:  gifsicle (interlaced by default, `GIF_INTERLACED`)
+* `IMAGE_QUALITY`:  0 - 100
+* `IMAGE_PROGRESSIVE`:  true | false
 
 
 ## CDN
@@ -234,10 +240,12 @@ As mentioned above there is a minimum set of config vars that need to be set bef
 
 To run `image-resizer` locally, the following will work for an OSX environment assuming you have node/npm installed - [NVM is useful](https://github.com/creationix/nvm).
 
-    npm install gulp -g
-    brew install graphicsmagick
-    npm install
-    gulp watch
+```bash
+npm install gulp -g
+./node_modules/image_resizer/node_modules/sharp/preinstall.sh
+npm install
+gulp watch
+```
 
 The gulp setup includes nodemon which runs the app nicely, restarting between code changes. `PORT` can be set in the `.env` file if you need to run on a port other than 3001.
 

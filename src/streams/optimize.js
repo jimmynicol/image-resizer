@@ -1,51 +1,16 @@
 'use strict';
 
+var sharp  = require('sharp');
+var env    = require('../config/environment_vars');
+var map    = require('map-stream');
 
-var env, map, Imagemin, concat;
 
-env      = require('../config/environment_vars');
-map      = require('map-stream');
-Imagemin = require('imagemin');
-concat   = require('concat-stream');
+module.exports = function () {
 
-function optimize(image, callback){
-  var imgmin;
+  return map( function (image, callback) {
 
-  imgmin = new Imagemin()
-    .src(image.contents)
-    .use(Imagemin.gifsicle(env.GIF_INTERLACED))
-    .use(Imagemin.jpegtran(env.JPEG_PROGRESSIVE));
-
-  switch(env.PNG_OPTIMIZER){
-  case 'pngquant':
-    imgmin.use(Imagemin.pngquant());
-    break;
-  case 'optipng':
-    imgmin.use(Imagemin.optipng(env.PNG_OPTIMIZATION));
-    break;
-  }
-
-  image.log.time('optimize:' + image.format);
-
-  imgmin.optimize(function(err, data){
-    image.log.timeEnd('optimize:' + image.format);
-
-    if (err){
-      image.log.error('optimize error', err);
-      image.error = new Error(err);
-      callback(null, image);
-    } else {
-      image.contents = data.contents;
-      callback(null, image);
-    }
-  });
-}
-
-module.exports = function(){
-
-  return map(function(image, callback){
     // pass through if there is an error
-    if (image.isError()){
+    if (image.isError()) {
       return callback(null, image);
     }
 
@@ -55,27 +20,30 @@ module.exports = function(){
       return callback(null, image);
     }
 
-    // if the incoming image contents are a stream we need to concat them into
-    // a buffer to pass to the optimizer
-    if (image.isStream()){
-      var buffer = concat(function(data){
-        image.contents = data;
-        optimize(image, callback);
-      });
-      image.contents.pipe(buffer);
+    image.log.time('optimize-sharp:' + image.format);
+
+    var r = sharp(image.contents);
+
+    if (env.IMAGE_PROGRESSIVE) {
+      r.progressive();
     }
 
-    // if the image is a buffer then just pass it through
-    else if (image.isBuffer()) {
-      optimize(image, callback);
+    if (env.IMAGE_QUALITY < 100) {
+      r.quality(env.IMAGE_QUALITY);
     }
 
-    else {
-      image.log.error('optimize error', 'image is neither stream or buffer');
-      image.error = new Error('image is neither stream or buffer');
+    r.toBuffer( function (err, buffer) {
+      if (err) {
+        image.log.error('optimize error', err);
+        image.error = new Error(err);
+      }
+      else {
+        image.contents = buffer;
+      }
+
+      image.log.timeEnd('optimize-sharp:' + image.format);
       callback(null, image);
-    }
-
+    });
   });
 
 };

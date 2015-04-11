@@ -2,7 +2,7 @@
 
 'use strict';
 
-var program, path, fs, mkdirp, pkg, chalk, _;
+var program, path, fs, mkdirp, pkg, chalk, _, exec;
 
 
 program = require('commander');
@@ -12,12 +12,13 @@ path    = require('path');
 chalk   = require('chalk');
 pkg     = require('../package.json');
 _       = require('lodash');
+exec    = require('child_process').exec;
 
 /**
 File/Directory helper functions
 */
 function write(path, str, mode) {
-  fs.writeFile(path, str, { mode: mode || '0666' });
+  fs.writeFileSync(path, str, { mode: mode || '0666' });
   console.log('    ' + chalk.green('create') + ': ' + path);
 }
 
@@ -26,15 +27,8 @@ function copy(from, to) {
 }
 
 function mkdir(path, fn) {
-  mkdirp(path, '0755', function(err){
-    if (err) {
-      throw err;
-    }
-    console.log('    ' + chalk.green('create') + ': ' + path);
-    if (typeof fn === 'function'){
-      fn();
-    }
-  });
+  mkdirp.sync(path, '0755');
+  console.log('    ' + chalk.green('create') + ': ' + path);
 }
 
 function emptyDirectory(path, fn) {
@@ -55,21 +49,12 @@ function createApplicationAt(dir){
   console.log('\n' + chalk.cyan('Creating new ') + chalk.cyan.bold('image-resizer') + chalk.cyan(' app!'));
   console.log();
 
-  process.on('exit', function(){
-    console.log();
-    console.log(chalk.green('   now install your dependencies') + ':');
-    console.log('     $ npm install');
-    console.log();
-    console.log(chalk.green('   then run the app') + ':');
-    console.log('     $ gulp watch');
-    console.log();
-  });
-
   // create a new package.json
   newPkg = {
     name: appName,
-    version: '0.0.1',
+    version: '1.0.0',
     main: 'index.js',
+    description: 'My awesome image resizing service!',
     engines: {
       'node': pkg.engines.node
     },
@@ -77,7 +62,7 @@ function createApplicationAt(dir){
       'image-resizer': '~' + pkg.version,
       'express': pkg.dependencies.express,
       'lodash': pkg.dependencies.lodash,
-      'gm': pkg.dependencies.gm
+      'chalk': pkg.dependencies.chalk
     },
     devDependencies: pkg.devDependencies
   };
@@ -85,7 +70,8 @@ function createApplicationAt(dir){
   write(dir + '/package.json', JSON.stringify(newPkg, null, 2));
 
   // create index.js
-  copy(__dirname + '/./templates/index.js.tmpl', dir + '/index.js');
+  var indexTmpl = fs.readFileSync(__dirname + '/./templates/index.js.tmpl');
+  write(dir + '/index.js', _.template(indexTmpl, {}));
 
   // create the gulpfile
   copy(__dirname + '/./templates/gulpfile.js.tmpl', dir + '/gulpfile.js');
@@ -104,12 +90,35 @@ function createApplicationAt(dir){
   copy(__dirname + '/./templates/.buildpacks.tmpl', dir + '/.buildpacks');
   copy(__dirname + '/./templates/Procfile.tmpl', dir + '/Procfile');
 
+  // create a README
+  copy(__dirname + '/./templates/README.md.tmpl', dir + '/README.md');
 
   // create plugin folders
   //  - sources
   //  - filters
   mkdir(dir + '/plugins/sources');
   mkdir(dir + '/plugins/filters');
+
+
+  console.log();
+  console.log(chalk.green('   now install your dependencies') + ':');
+  console.log('     $ npm install');
+  console.log();
+  console.log(chalk.green('   then to run the app locally') + ':');
+  console.log('     $ gulp watch');
+  console.log();
+
+  exec('vips --version', function (err, stdout, stderr) {
+    if (err || stderr) {
+      console.log(chalk.yellow('   looks like vips is also missing, run the following to install') + ':');
+      console.log('     $ ./node_modules/image_resizer/node_modules/sharp/preinstall.sh');
+      console.log();
+    }
+
+    console.log(chalk.yellow('   to get up and running on Heroku') + ':');
+    console.log('     https://devcenter.heroku.com/articles/getting-started-with-nodejs#introduction');
+    console.log();
+  });
 }
 
 /**
@@ -119,12 +128,13 @@ program.version(pkg.version);
 program.option('-f, --force', 'force app build in an non-empty directory');
 program.command('new')
   .description('Create new clean image-resizer app')
-  .action(function(){
+  .action( function () {
     var path = '.';
-    emptyDirectory(path, function(empty){
+    emptyDirectory(path, function(empty) {
       if (empty || program.force){
         createApplicationAt(path);
-      } else {
+      }
+      else {
         console.log(
           chalk.red('\n    The current directory is not empty, please use the force (-f) option to proceed.\n')
         );
@@ -133,7 +143,7 @@ program.command('new')
   });
 program.command('filter <name>')
   .description('Create new filter stream')
-  .action(function(filterName){
+  .action( function (filterName) {
     copy(__dirname + '/./templates/filter.js.tmpl', './plugins/filters/' + filterName + '.js');
   });
 program.parse(process.argv);
