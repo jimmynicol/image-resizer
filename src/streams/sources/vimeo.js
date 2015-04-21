@@ -6,12 +6,6 @@ var request = require('request');
 var env     = require('../../config/environment_vars');
 
 
-function contentLength(bufs){
-  return bufs.reduce(function(sum, buf){
-    return sum + buf.length;
-  }, 0);
-}
-
 function Vimeo(image){
   /* jshint validthis:true */
   if (!(this instanceof Vimeo)){
@@ -29,9 +23,7 @@ util.inherits(Vimeo, stream.Readable);
 
 Vimeo.prototype._read = function(){
   var _this = this,
-      url, videoId,
-      imgStream,
-      bufs = [];
+      url, videoId;
 
   if ( this.ended ){ return; }
 

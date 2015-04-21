@@ -32,6 +32,7 @@ vars = {
 
   // Optimization options
   IMAGE_PROGRESSIVE: true,
+  IMAGE_QUALITY: 80,
 
   // Cache expiries
   IMAGE_EXPIRY: 60 * 60 * 24 * 90,
@@ -60,17 +61,24 @@ vars = {
 };
 
 _.forEach(vars, function(value, key){
+  var keyType = typeof vars[key];
+
   if (_.has(process.env, key)){
     vars[key] = process.env[key];
+
+    if (keyType === 'number') {
+      vars[key] = +(vars[key]);
+    }
+
+    // cast any boolean strings to proper boolean values
+    if (vars[key] === 'true'){
+      vars[key] = true;
+    }
+    if (vars[key] === 'false'){
+      vars[key] = false;
+    }
   }
 
-  // cast any boolean strings to proper boolean values
-  if (vars[key] === 'true'){
-    vars[key] = true;
-  }
-  if (vars[key] === 'false'){
-    vars[key] = false;
-  }
 });
 
 

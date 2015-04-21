@@ -39,7 +39,7 @@ util.inherits(Twitter, stream.Readable);
 
 Twitter.prototype._read = function(){
   var _this = this,
-      profileId, queryString, imgStream;
+      profileId, queryString;
 
   if ( this.ended ){ return; }
 

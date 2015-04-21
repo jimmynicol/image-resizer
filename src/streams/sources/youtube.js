@@ -8,12 +8,6 @@ request = require('request');
 env     = require('../../config/environment_vars');
 
 
-function contentLength(bufs){
-  return bufs.reduce(function(sum, buf){
-    return sum + buf.length;
-  }, 0);
-}
-
 function Youtube(image){
   /* jshint validthis:true */
   if (!(this instanceof Youtube)){
@@ -31,9 +25,7 @@ util.inherits(Youtube, stream.Readable);
 
 Youtube.prototype._read = function(){
   var _this = this,
-      url, videoId,
-      imgStream,
-      bufs = [];
+      url, videoId;
 
   if ( this.ended ){ return; }
 
