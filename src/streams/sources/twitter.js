@@ -22,12 +22,6 @@ try {
 }
 
 
-function contentLength(bufs){
-  return bufs.reduce(function(sum, buf){
-    return sum + buf.length;
-  }, 0);
-}
-
 function Twitter(image){
   /* jshint validthis:true */
   if (!(this instanceof Twitter)){
@@ -45,8 +39,7 @@ util.inherits(Twitter, stream.Readable);
 
 Twitter.prototype._read = function(){
   var _this = this,
-      profileId, queryString, imgStream,
-      bufs = [];
+      profileId, queryString, imgStream;
 
   if ( this.ended ){ return; }
 
@@ -84,22 +77,41 @@ Twitter.prototype._read = function(){
     if (err){
       _this.image.error = new Error(err);
       endStream();
-    } else {
+    }
+    else {
       /* jshint camelcase:false */
       var imageUrl = data.profile_image_url
         .replace('_normal', '')
         .replace('_bigger', '')
         .replace('_mini', '');
 
-      imgStream = request.get(imageUrl);
-      imgStream.on('data',  function(d) { bufs.push(d); });
-      imgStream.on('error', function(err) { _this.image.error = err; });
-      imgStream.on('end',   function() {
+      var opts = {
+        url: imageUrl,
+        encoding: null
+      };
+
+      request(opts, function (err, response, body) {
         _this.image.log.timeEnd('twitter');
-        _this.image.contents = Buffer.concat(bufs);
-        _this.image.originalContentLength = contentLength(bufs);
-        endStream();
+
+        if (err) {
+          _this.image.error = err;
+        }
+        else {
+          if (response.statusCode === 200) {
+            _this.image.contents = body;
+            _this.image.originalContentLength = body.length;
+            _this.ended = true;
+          }
+          else {
+            _this.image.error = new Error('Twitter user image not found');
+            _this.image.error.statusCode = 404;
+          }
+        }
+
+        _this.push(_this.image);
+        _this.push(null);
       });
+
     }
   });
 

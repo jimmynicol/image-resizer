@@ -7,11 +7,11 @@ util    = require('util');
 request = require('request');
 env     = require('../../config/environment_vars');
 
-function contentLength(bufs){
-  return bufs.reduce(function(sum, buf){
-    return sum + buf.length;
-  }, 0);
-}
+// function contentLength(bufs){
+//   return bufs.reduce(function(sum, buf){
+//     return sum + buf.length;
+//   }, 0);
+// }
 
 function Facebook(image){
   /* jshint validthis:true */
@@ -30,9 +30,7 @@ util.inherits(Facebook, stream.Readable);
 
 Facebook.prototype._read = function(){
   var _this = this,
-      url,
-      fbStream,
-      bufs = [];
+      url;
 
   if ( this.ended ){ return; }
 
@@ -49,14 +47,29 @@ Facebook.prototype._read = function(){
 
   this.image.log.time('facebook');
 
-  fbStream = request.get(url);
-  fbStream.on('data',  function(d){ bufs.push(d); });
-  fbStream.on('error', function(err){ _this.image.error = err; });
-  fbStream.on('end',   function(){
+  var opts = {
+    url: url,
+    encoding: null
+  };
+
+  request(opts, function (err, response, body) {
     _this.image.log.timeEnd('facebook');
-    _this.image.contents = Buffer.concat(bufs);
-    _this.image.originalContentLength = contentLength(bufs);
-    _this.ended = true;
+
+    if (err) {
+      _this.image.error = err;
+    }
+    else {
+      if (response.statusCode === 200) {
+        _this.image.contents = body;
+        _this.image.originalContentLength = body.length;
+        _this.ended = true;
+      }
+      else {
+        _this.image.error = new Error('Facebook user image not found');
+        _this.image.error.statusCode = 404;
+      }
+    }
+
     _this.push(_this.image);
     _this.push(null);
   });

@@ -49,14 +49,29 @@ Youtube.prototype._read = function(){
 
   this.image.log.time('youtube');
 
-  imgStream = request.get(url);
-  imgStream.on('data',  function(d) { bufs.push(d); });
-  imgStream.on('error', function(err) { _this.image.error = err; });
-  imgStream.on('end',   function() {
+  var opts = {
+    url: url,
+    encoding: null
+  };
+
+  request(opts, function (err, response, body) {
     _this.image.log.timeEnd('youtube');
-    _this.image.contents = Buffer.concat(bufs);
-    _this.image.originalContentLength = contentLength(bufs);
-    _this.ended = true;
+
+    if (err) {
+      _this.image.error = err;
+    }
+    else {
+      if (response.statusCode === 200) {
+        _this.image.contents = body;
+        _this.image.originalContentLength = body.length;
+        _this.ended = true;
+      }
+      else {
+        _this.image.error = new Error('Youtube image not found');
+        _this.image.error.statusCode = 404;
+      }
+    }
+
     _this.push(_this.image);
     _this.push(null);
   });

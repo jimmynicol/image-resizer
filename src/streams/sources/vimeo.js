@@ -56,22 +56,41 @@ Vimeo.prototype._read = function(){
     if (err){
       _this.image.error = new Error(err);
       endStream();
-    } else {
+    }
+    else {
       var json = JSON.parse(body);
 
       /* jshint camelcase:false */
       var imageUrl = json[0].thumbnail_large;
       imageUrl = imageUrl.replace('_640.jpg', '');
 
-      imgStream = request.get(imageUrl);
-      imgStream.on('data',  function(d) { bufs.push(d); });
-      imgStream.on('error', function(err) { _this.image.error = err; });
-      imgStream.on('end',   function() {
+      var opts = {
+        url: imageUrl,
+        encoding: null
+      };
+
+      request(opts, function (err, response, body) {
         _this.image.log.timeEnd('vimeo');
-        _this.image.contents = Buffer.concat(bufs);
-        _this.image.originalContentLength = contentLength(bufs);
-        endStream();
+
+        if (err) {
+          _this.image.error = err;
+        }
+        else {
+          if (response.statusCode === 200) {
+            _this.image.contents = body;
+            _this.image.originalContentLength = body.length;
+            _this.ended = true;
+          }
+          else {
+            _this.image.error = new Error('Vimeo image not found');
+            _this.image.error.statusCode = 404;
+          }
+        }
+
+        _this.push(_this.image);
+        _this.push(null);
       });
+
     }
   });
 
