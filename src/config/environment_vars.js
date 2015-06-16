@@ -30,6 +30,7 @@ vars = {
   // or height - limits max height/width in parameters
   MAX_IMAGE_DIMENSION: null,
 
+  // Color used when padding an image with the 'pad' crop modifier.
   IMAGE_PADDING_COLOR: 'white',
 
   // Optimization options

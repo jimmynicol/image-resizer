@@ -101,6 +101,9 @@ The available variables are as follows:
   // max height/width in parameters
   MAX_IMAGE_DIMENSION: null,
 
+  // Color used when padding an image with the 'pad' crop modifier.
+  IMAGE_PADDING_COLOR: 'white',
+
   // Optimization options
   IMAGE_QUALITY: 80,
   IMAGE_PROGRESSIVE: true,
