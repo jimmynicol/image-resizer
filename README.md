@@ -180,6 +180,11 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 * scale
     * do not maintain original proportions
     * force image to be new dimensions (squishing the image)
+* pad
+    * maintain original proportions
+    * resize so image fits wholly into new dimensions
+    * padding added on top/bottom or left/right as needed (color is configurable)
+
 
 *Examples:*
 * `http://my.cdn.com/s50/path/to/image.png`
