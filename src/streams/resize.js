@@ -140,6 +140,11 @@ module.exports = function () {
           // TODO: deal with scale
           r.resize(image.modifiers.width, image.modifiers.height);
           break;
+        case 'pad':
+          r.resize(
+            image.modifiers.width,
+            image.modifiers.height
+          ).background(env.IMAGE_PADDING_COLOR || 'white').embed();
         }
 
         r.toBuffer(resizeResponse);

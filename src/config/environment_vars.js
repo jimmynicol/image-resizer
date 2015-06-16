@@ -30,6 +30,8 @@ vars = {
   // or height - limits max height/width in parameters
   MAX_IMAGE_DIMENSION: null,
 
+  IMAGE_PADDING_COLOR: 'white',
+
   // Optimization options
   IMAGE_PROGRESSIVE: true,
   IMAGE_QUALITY: 80,

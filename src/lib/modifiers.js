@@ -40,6 +40,10 @@ Crop modifiers:
   scale
      - do not maintain original proportions
      - force image to be new dimensions (squishing the image)
+  pad
+     - maintain original proportions
+     - resize so image fits wholly into new dimensions
+     - padding added on top/bottom or left/right as needed (color is configurable)
 
 */
 'use strict';
@@ -95,7 +99,7 @@ modifierMap = [
     key: 'c',
     desc: 'crop',
     type: 'string',
-    values: ['fit','fill','cut','scale'],
+    values: ['fit','fill','cut','scale','pad'],
     default: 'fit'
   },
   {
