@@ -52,7 +52,7 @@ The directory structure created via `$ image-resizer new` will include a plugins
 
 ## Dependencies
 
-`image-resizer` only requires a working node/npm environment and `graphicsmagick`. The necessary buildpack information to load your Heroku environment is included.
+`image-resizer` only requires a working node/npm environment and `libvips`. The necessary buildpack information to load your Heroku environment is included.
 
 
 ## Environment Variables

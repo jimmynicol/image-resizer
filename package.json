@@ -40,7 +40,7 @@
     "mkdirp": "^0.5.0",
     "morgan": "^1.0.1",
     "request": "~2.34.0",
-    "sharp": "^0.8.3",
+    "sharp": "^0.10.1",
     "twit": "~1.1.15"
   },
   "devDependencies": {
