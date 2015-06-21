@@ -101,6 +101,9 @@ The available variables are as follows:
   // max height/width in parameters
   MAX_IMAGE_DIMENSION: null,
 
+  // Color used when padding an image with the 'pad' crop modifier.
+  IMAGE_PADDING_COLOR: 'white',
+
   // Optimization options
   IMAGE_QUALITY: 80,
   IMAGE_PROGRESSIVE: true,
@@ -180,6 +183,11 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 * scale
     * do not maintain original proportions
     * force image to be new dimensions (squishing the image)
+* pad
+    * maintain original proportions
+    * resize so image fits wholly into new dimensions
+    * padding added on top/bottom or left/right as needed (color is configurable)
+
 
 *Examples:*
 * `http://my.cdn.com/s50/path/to/image.png`
