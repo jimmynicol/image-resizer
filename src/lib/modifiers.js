@@ -158,16 +158,26 @@ function parseModifiers(mods, modArr) {
     value = item.slice(1);
 
     if (inArray(key, modKeys)){
-
+      
       // get the modifier object that responds to the listed key
       mod = getModifier(key);
+
+      //this is a limit enforced by sharp. the application will crash without
+      //these checks.
+      var dimensionLimit = 16383;
 
       switch(mod.desc){
       case 'height':
         mods.height = string.sanitize(value);
+        if (mods.height > dimensionLimit) {
+          mods.height = dimensionLimit;
+        }
         break;
       case 'width':
         mods.width = string.sanitize(value);
+        if (mods.width > dimensionLimit) {
+          mods.width = dimensionLimit;
+        }
         break;
       case 'square':
         mods.action = 'square';
