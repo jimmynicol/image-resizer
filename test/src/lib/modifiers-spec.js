@@ -179,4 +179,38 @@ describe('Modifiers module', function(){
 
   });
 
+  // Quality
+  describe('Quality requests', function(){
+    it('should leave the action as original', function(){
+      var request = '/q90/path/to/image.png';
+      mod.parse(request).action.should.equal('original');
+    });
+    it('should set the quality', function(){
+      var request = '/q90/image.png',
+        p = mod.parse(request);
+      expect(p.quality).to.equal(90);
+    });
+    it('should clamp out of range quality values', function(){
+      var request, p;
+
+      request = '/q101/image.png';
+      p = mod.parse(request);
+      expect(p.quality).to.equal(100);
+
+      request = '/q0/image.png';
+      p = mod.parse(request);
+      expect(p.quality).to.equal(1);
+    });
+    it('should use environment for default quality value', function(){
+      var request = '/image.png',
+        p = mod.parse(request);
+      expect(p.quality).to.equal(env.IMAGE_QUALITY);
+    });
+    it('should ignore invalid quality value', function(){
+      var request = '/qinvalid/image.png',
+        p = mod.parse(request);
+      expect(p.quality).to.equal(env.IMAGE_QUALITY);
+    });
+  });
+
 });
