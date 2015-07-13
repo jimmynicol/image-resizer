@@ -58,10 +58,9 @@ function Image(request){
   this.log = new Logger();
 }
 
-
-Image.validFormats = ['jpeg', 'jpg', 'gif', 'png'];
+Image.validInputFormats = ['jpeg', 'jpg', 'gif', 'png', 'webp'];
+Image.validFormats = ['jpeg', 'png', 'webp'];
 Image.formatErrorText = 'not valid image format';
-
 
 // Determine the name and format of the requested image
 Image.prototype.parseImage = function(request){
@@ -70,7 +69,21 @@ Image.prototype.parseImage = function(request){
   // clean out any metadata format
   fileStr = fileStr.replace(/.json$/, '');
 
-  this.format = _.last(fileStr.split('.')).toLowerCase();
+  var exts = fileStr.split('.');
+  this.format = _.last(exts).toLowerCase();
+  if(this.format === 'jpg') {
+    this.format = 'jpeg';
+  }
+
+  // if path contains valid input and output format extensions, remove the output format from path
+  if(exts.length > 1) {
+    var inputFormat = exts[exts.length - 2].toLowerCase();
+    if (_.indexOf(Image.validFormats, this.format) !== -1 &&
+      _.indexOf(Image.validInputFormats, inputFormat) !== -1){
+      fileStr = exts.slice(0, -1).join('.');
+    }
+  }
+
   this.image  = fileStr;
 };
 
