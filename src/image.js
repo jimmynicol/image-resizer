@@ -129,6 +129,9 @@ Image.prototype.getFile = function(){
   if (_.has(this.modifiers, 'external')){
     if (_.has(sources, this.modifiers.external)){
       streamType = this.modifiers.external;
+    } else if (_.has(env.externalSources, this.modifiers.external)) {
+      Stream = sources.external;
+      return new Stream(this, this.modifiers.external, env.externalSources[this.modifiers.external]);
     }
   }
 
