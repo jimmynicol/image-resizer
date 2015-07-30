@@ -43,8 +43,12 @@ module.exports = function () {
 
     var r = sharp(image.contents);
 
-    // never enlarge an image beyonds its original size
-    r.withoutEnlargement();
+    // never enlarge an image beyond its original size, unless we're padding
+    // the image, as even though this can count as an "enlargement" the padded
+    // result can be reasonably generated in most cases.
+    if (image.modifiers.action !== 'crop' && image.modifiers.crop !== 'pad') {
+      r.withoutEnlargement();
+    }
 
     // if allowed auto rotate images, very helpful for photos off of an iphone
     // which are landscape by default and the metadata tells them what to show.
