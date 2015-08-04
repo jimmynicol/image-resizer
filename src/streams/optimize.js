@@ -32,6 +32,8 @@ module.exports = function () {
       r.quality(image.modifiers.quality);
     }
 
+    r.toFormat(image.format);
+
     r.toBuffer( function (err, buffer) {
       if (err) {
         image.log.error('optimize error', err);

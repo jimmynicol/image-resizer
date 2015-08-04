@@ -152,7 +152,7 @@ While `image-resizer` will work as a standalone app, almost all of its facility 
 
 A couple of routes are included with the default app, but the most important is the image generation one, which is as follows:
 
-`http://my.cdn.com/:modifiers/path/to/image.png[:metadata]`
+`http://my.cdn.com/:modifiers/path/to/image.png[:format][:metadata]`
 
 Modifiers are a dash delimited string of the requested modifications to be made, these include:
 
@@ -225,6 +225,13 @@ A shorter expiry on images from social sources can also be set via `IMAGE_EXPIRY
 
 It is also trivial to write new source streams via the plugins directory. Examples are in `src/streams/sources/`.
 
+## Output format
+
+You can convert images to another image format by appending an extra extension to the image path:
+
+* `http://my.cdn.com/path/to/image.png.webp`
+
+JPEG (`.jpg`/`.jpeg`), PNG (`.png`), and WEBP (`.webp`) output formats are supported.
 
 ## Metadata requests
 
