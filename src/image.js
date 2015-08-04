@@ -37,6 +37,7 @@ function Image(request){
   // reject this request if the image format is not correct
   if (_.indexOf(Image.validFormats, this.format) === -1){
     this.error = new Error(Image.formatErrorText);
+    this.error.statusCode = 404;
   }
 
   // determine the requested modifications
