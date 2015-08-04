@@ -59,8 +59,10 @@ vars = {
   LOCAL_FILE_PATH: process.cwd(),
 
   // Display an image if a 404 request is encountered from a source
-  IMAGE_404: null
+  IMAGE_404: null,
 
+  // Set a key used to force clients to sign requests (reduce risk of DDoS)
+  REQUEST_SIGNING_KEY: null
 };
 
 _.forEach(vars, function(value, key){

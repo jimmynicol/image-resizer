@@ -1,6 +1,6 @@
 'use strict';
 
-var _, Logger, env, modifiers, stream, util;
+var _, Logger, env, modifiers, stream, util, crypto;
 
 _         = require('lodash');
 Logger    = require('./utils/logger');
@@ -8,6 +8,7 @@ env       = require('./config/environment_vars');
 modifiers = require('./lib/modifiers');
 stream    = require('stream');
 util      = require('util');
+crypto    = require('crypto');
 
 
 // Simple stream to represent an error at an early stage, for instance a
@@ -31,8 +32,17 @@ function Image(request){
   // set a mark for the start of the process
   this.mark = Date.now();
 
+  // split path into parts
+  this.pathParts = request.path.replace(/^\//,'').split('/');
+
   // determine the name and format (mime) of the requested image
-  this.parseImage(request);
+  this.parseImage(this.pathParts);
+
+  // reject the request if signing is required and not valid
+  if (env.REQUEST_SIGNING_KEY && !this.checkSignature(this.pathParts)){
+    this.error = new Error('Signature mismatch');
+    this.error.statusCode = 404;
+  }
 
   // reject this request if the image format is not correct
   if (_.indexOf(Image.validFormats, this.format) === -1){
@@ -41,10 +51,10 @@ function Image(request){
   }
 
   // determine the requested modifications
-  this.modifiers = modifiers.parse(request.path);
+  this.modifiers = modifiers.parse(this.pathParts.join('/'));
 
   // pull the various parts needed from the request params
-  this.parseUrl(request);
+  this.parseUrl(this.pathParts);
 
   // placeholder for the buffer/stream coming from s3, will hold the image
   this.contents = null;
@@ -65,8 +75,8 @@ Image.formatErrorText = 'not valid image format';
 
 
 // Determine the name and format of the requested image
-Image.prototype.parseImage = function(request){
-  var fileStr = _.last(request.path.split('/'));
+Image.prototype.parseImage = function(parts){
+  var fileStr = _.last(parts);
 
   // clean out any metadata format
   fileStr = fileStr.replace(/.json$/, '');
@@ -77,9 +87,7 @@ Image.prototype.parseImage = function(request){
 
 
 // Determine the file path for the requested image
-Image.prototype.parseUrl = function(request){
-  var parts = request.path.replace(/^\//,'').split('/');
-
+Image.prototype.parseUrl = function(parts){
   // overwrite the image name with the parsed version so metadata requests do
   // not mess things up
   parts[parts.length - 1] = this.image;
@@ -105,6 +113,23 @@ Image.prototype.parseUrl = function(request){
   this.path = decodeURI(this.path);
 };
 
+
+// Helper method to check that a request signature is valid
+Image.prototype.checkSignature = function(parts){
+  var signature = parts[0];
+  parts.shift();
+  this.pathParts = parts;
+
+  var computedHash = crypto.createHmac('sha1', env.REQUEST_SIGNING_KEY)
+                     .update(parts.join('/'))
+                     .digest('base64')
+                     .replace(/\+/g, '-')
+                     .replace(/\//g, '_')
+                     .replace(/\=/g, 'e')
+                     .substr(0,8);
+
+  return signature === computedHash;
+}
 
 Image.prototype.isError = function(){ return this.error !== null; };
 
