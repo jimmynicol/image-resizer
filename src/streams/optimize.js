@@ -28,8 +28,8 @@ module.exports = function () {
       r.progressive();
     }
 
-    if (env.IMAGE_QUALITY < 100) {
-      r.quality(env.IMAGE_QUALITY);
+    if (image.modifiers.quality < 100) {
+      r.quality(image.modifiers.quality);
     }
 
     r.toBuffer( function (err, buffer) {

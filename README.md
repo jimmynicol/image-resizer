@@ -136,11 +136,12 @@ The available variables are as follows:
 
 ## Optimization
 
-Optimization of images is done via [sharp](https://github.com/lovell/sharp#qualityquality). The variables to set are:
+Optimization of images is done via [sharp](https://github.com/lovell/sharp#qualityquality). The environment variables to set are:
 
-* `IMAGE_QUALITY`:  0 - 100
+* `IMAGE_QUALITY`:  1 - 100
 * `IMAGE_PROGRESSIVE`:  true | false
 
+You may also adjust the image quality setting per request with the `q` quality modifier described below.
 
 ## CDN
 
@@ -165,6 +166,7 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 * gravity:      eg. gs, gne
 * filter:       eg. fsepia
 * external:     eg. efacebook
+* quality:      eg. q90
 
 *Crop modifiers:*
 * fit
