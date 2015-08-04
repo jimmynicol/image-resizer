@@ -58,8 +58,8 @@ string     = require('../utils/string');
 filters    = require('../streams/filters');
 sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
-sourceKeys = _.keys(sources);
 environment = require('../config/environment_vars');
+sourceKeys = _.keys(sources).concat(_.keys(environment.externalSources));
 fs         = require('fs');
 
 

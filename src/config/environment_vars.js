@@ -59,7 +59,10 @@ vars = {
   LOCAL_FILE_PATH: process.cwd(),
 
   // Display an image if a 404 request is encountered from a source
-  IMAGE_404: null
+  IMAGE_404: null,
+
+  // Whitelist arbitrary HTTP source prefixes using EXTERNAL_SOURCE_*
+  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
 
 };
 
@@ -84,6 +87,13 @@ _.forEach(vars, function(value, key){
 
 });
 
+// Add external sources from environment vars
+vars.externalSources = {};
+Object.keys(vars).concat(Object.keys(process.env)).filter(function(key) {
+  return (/^EXTERNAL_SOURCE_/).test(key);
+}).forEach(function(key) {
+  vars.externalSources[key.substr('EXTERNAL_SOURCE_'.length).toLowerCase()] = process.env[key] || vars[key];
+});
 
 // A few helpers to quickly determine the environment
 vars.development = vars.NODE_ENV === 'development';
