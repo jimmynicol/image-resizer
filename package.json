@@ -16,10 +16,7 @@
     "optimization"
   ],
   "author": "James Nicol <james.andrew.nicol@gmail.com> (https://github.com/jimmynicol)",
-  "license": {
-    "type": "MIT",
-    "url": "http://github.com/jimmynicol/image-resizer/raw/master/LICENSE"
-  },
+  "license": "MIT",
   "repository": "git://github.com/jimmynicol/image-resizer",
   "bin": {
     "image-resizer": "./bin/image_resizer.js"
