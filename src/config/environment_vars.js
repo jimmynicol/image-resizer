@@ -62,7 +62,7 @@ vars = {
   IMAGE_404: null,
 
   // Whitelist arbitrary HTTP source prefixes using EXTERNAL_SOURCE_*
-  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
+  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/',
 
   // Set a key used to force clients to sign requests (reduce risk of DDoS)
   REQUEST_SIGNING_KEY: null
