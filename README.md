@@ -131,16 +131,20 @@ The available variables are as follows:
 
   // Display an image if a 404 request is encountered from a source
   IMAGE_404: null
+
+  // Whitelist arbitrary HTTP source prefixes using EXTERNAL_SOURCE_*
+  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
 ```
 
 
 ## Optimization
 
-Optimization of images is done via [sharp](https://github.com/lovell/sharp#qualityquality). The variables to set are:
+Optimization of images is done via [sharp](https://github.com/lovell/sharp#qualityquality). The environment variables to set are:
 
-* `IMAGE_QUALITY`:  0 - 100
+* `IMAGE_QUALITY`:  1 - 100
 * `IMAGE_PROGRESSIVE`:  true | false
 
+You may also adjust the image quality setting per request with the `q` quality modifier described below.
 
 ## CDN
 
@@ -151,7 +155,7 @@ While `image-resizer` will work as a standalone app, almost all of its facility 
 
 A couple of routes are included with the default app, but the most important is the image generation one, which is as follows:
 
-`http://my.cdn.com/:modifiers/path/to/image.png[:metadata]`
+`http://my.cdn.com/:modifiers/path/to/image.png[:format][:metadata]`
 
 Modifiers are a dash delimited string of the requested modifications to be made, these include:
 
@@ -165,6 +169,7 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 * gravity:      eg. gs, gne
 * filter:       eg. fsepia
 * external:     eg. efacebook
+* quality:      eg. q90
 
 *Crop modifiers:*
 * fit
@@ -217,12 +222,33 @@ translates to:
 
 It is possible to bring images in from external sources and store them behind your own CDN. This is very useful when it comes to things like Facebook or Vimeo which have very inconsistent load times. Each external source can still enable any of the modification parameters list above.
 
+In addition to the provided external sources, you can easily add your own basic external sources using `EXTERNAL_SOURCE_*` environment variables. For example, to add Wikipedia as an external source, set the following environment variable:
+
+```
+EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
+```
+
+Then you can request images beginning with the provided path using the `ewikipedia` modifier, eg:
+
+    http://my.cdn.com/ewikipedia/en/7/70/Example.png
+    
+translates to:
+
+    https://upload.wikimedia.org/wikipedia/en/7/70/Example.png
+
 It is worth noting that Twitter requires a full set of credentials as you need to poll their API in order to return profile pics.
 
 A shorter expiry on images from social sources can also be set via `IMAGE_EXPIRY_SHORT` env var so they expiry at a faster rate than other images.
 
 It is also trivial to write new source streams via the plugins directory. Examples are in `src/streams/sources/`.
 
+## Output format
+
+You can convert images to another image format by appending an extra extension to the image path:
+
+* `http://my.cdn.com/path/to/image.png.webp`
+
+JPEG (`.jpg`/`.jpeg`), PNG (`.png`), and WEBP (`.webp`) output formats are supported.
 
 ## Metadata requests
 

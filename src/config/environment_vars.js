@@ -61,6 +61,9 @@ vars = {
   // Display an image if a 404 request is encountered from a source
   IMAGE_404: null,
 
+  // Whitelist arbitrary HTTP source prefixes using EXTERNAL_SOURCE_*
+  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
+
   // Set a key used to force clients to sign requests (reduce risk of DDoS)
   REQUEST_SIGNING_KEY: null
 };
@@ -86,6 +89,13 @@ _.forEach(vars, function(value, key){
 
 });
 
+// Add external sources from environment vars
+vars.externalSources = {};
+Object.keys(vars).concat(Object.keys(process.env)).filter(function(key) {
+  return (/^EXTERNAL_SOURCE_/).test(key);
+}).forEach(function(key) {
+  vars.externalSources[key.substr('EXTERNAL_SOURCE_'.length).toLowerCase()] = process.env[key] || vars[key];
+});
 
 // A few helpers to quickly determine the environment
 vars.development = vars.NODE_ENV === 'development';

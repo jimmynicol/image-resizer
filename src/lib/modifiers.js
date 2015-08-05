@@ -22,6 +22,7 @@ Supported modifiers are:
   - gravity:      eg. gs, gne
   - filter:       eg. fsepia
   - external:     eg. efacebook
+  - quality:      eg. q90
 
 Crop modifiers:
   fit
@@ -57,8 +58,8 @@ string     = require('../utils/string');
 filters    = require('../streams/filters');
 sources    = require('../streams/sources');
 filterKeys = _.keys(filters);
-sourceKeys = _.keys(sources);
 environment = require('../config/environment_vars');
+sourceKeys = _.keys(sources).concat(_.keys(environment.externalSources));
 fs         = require('fs');
 
 
@@ -114,6 +115,13 @@ modifierMap = [
     desc: 'filter',
     type: 'string',
     values: filterKeys
+  },
+  {
+    key: 'q',
+    desc: 'quality',
+    type: 'integer',
+    range: [1, 100],
+    default: environment.IMAGE_QUALITY
   }
 ];
 
@@ -214,6 +222,14 @@ function parseModifiers(mods, modArr) {
           mods.filter = value.toLowerCase();
         }
         break;
+      case 'quality':
+        value = string.sanitize(value);
+        if(!isNaN(value)) {
+          var min = mod.range[0],
+            max = mod.range[1];
+          mods.quality = Math.max(min, Math.min(max, value));
+        }
+        break;
       }
 
     }
@@ -269,10 +285,11 @@ exports.parse = function(requestUrl, namedMods, envOverride){
     env = _.clone(environment);
   }
 
-  var segments, mods, modStr, image, gravity, crop;
+  var segments, mods, modStr, image, gravity, crop, quality;
 
   gravity   = getModifier('g');
   crop      = getModifier('c');
+  quality   = getModifier('q');
   segments  = requestUrl.replace(/^\//,'').split('/');
   modStr    = _.first(segments);
   image     = _.last(segments).toLowerCase();
@@ -285,7 +302,8 @@ exports.parse = function(requestUrl, namedMods, envOverride){
     height: null,
     width: null,
     gravity: gravity.default,
-    crop: crop.default
+    crop: crop.default,
+    quality: quality.default
   };
 
   // check the request to see if it includes a named modifier

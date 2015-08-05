@@ -12,7 +12,7 @@ describe('Image class', function(){
   describe('#parseImage()', function(){
     it('should determine the format from the request', function(){
       var img = new Img({path: '/path/to/image.jpg'});
-      img.format.should.equal('jpg');
+      img.format.should.equal('jpeg');
     });
 
     it('should normalise the format from the request', function(){
@@ -22,7 +22,7 @@ describe('Image class', function(){
 
     it('should still get format from a metadata request', function(){
       var img = new Img({path: '/path/to/image.jpg.json'});
-      img.format.should.equal('jpg');
+      img.format.should.equal('jpeg');
     });
 
     it('should retrieve image name from the path', function(){
@@ -68,6 +68,14 @@ describe('Image class', function(){
       var perioded = '8b0ccce0.0a6c.4270.9bc0.8b6dfaabea19.jpg',
           img = new Img({path: '/path/to/' + perioded + '.json'});
       img.image.should.equal(perioded);
+    });
+
+    it('should exclude second output format from image path', function(){
+      var image = 'image.jpg',
+        img = new Img({path: '/path/to/' + image + '.webp'});
+      img.format.should.equal('webp');
+      img.image.should.equal(image);
+      img.path.should.equal('/path/to/' + image);
     });
 
   });
