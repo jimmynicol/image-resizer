@@ -213,7 +213,7 @@ It is worthy of note that this application will not scale images up, we are all 
 
 If a REQUEST_SIGNING_KEY is set all requests to the application will require a signature to be passed as the first url segment. This is used to verify the client is allowed to make the request. Request signing can reduce the risk DDoS. It's a simple mechanism to validate requests are coming from trusted clients.
 
-The following PHP method is an example of how can client can generate valid a signature:
+The following PHP method is an example of how a client can generate valid a signature:
 
 ```
 <?php
