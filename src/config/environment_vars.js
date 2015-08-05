@@ -25,9 +25,8 @@ vars = {
   AUTO_ORIENT: true,
   REMOVE_METADATA: true,
 
-  // Protect original files
-  // by specifying a max image width
-  // or height - limits max height/width in parameters
+  // Protect original files by specifying a max image width or height - limits
+  // max height/width in parameters
   MAX_IMAGE_DIMENSION: null,
 
   // Color used when padding an image with the 'pad' crop modifier.

@@ -32,6 +32,7 @@
     "errorhandler": "^1.0.1",
     "express": "^4.9.7",
     "glob": "~3.2.9",
+    "image-type": "^2.0.2",
     "lodash": "~2.4.1",
     "map-stream": "~0.1.0",
     "mkdirp": "^0.5.0",

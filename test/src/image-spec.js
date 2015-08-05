@@ -2,6 +2,8 @@
 
 var chai = require('chai'),
     expect = chai.expect,
+    path = require('path'),
+    fs = require('fs'),
     Img = require('../../src/image');
 
 chai.should();
@@ -9,14 +11,10 @@ chai.should();
 
 describe('Image class', function(){
 
-  describe('#parseImage()', function(){
-    it('should determine the format from the request', function(){
-      var img = new Img({path: '/path/to/image.jpg'});
-      img.format.should.equal('jpeg');
-    });
-
+  describe('#format', function () {
     it('should normalise the format from the request', function(){
       var img = new Img({path: '/path/to/image.JPEG'});
+      img.format = 'JPEG'
       img.format.should.equal('jpeg');
     });
 
@@ -24,7 +22,20 @@ describe('Image class', function(){
       var img = new Img({path: '/path/to/image.jpg.json'});
       img.format.should.equal('jpeg');
     });
+  });
 
+  describe('#content', function () {
+    it ('should set the format based on the image data', function () {
+      var imgSrc = path.resolve(__dirname, '../sample_images/image1.jpg');
+      var buf = fs.readFileSync(imgSrc);
+      var img = new Img({path: '/path/to/image.jpg'});
+
+      img.contents = buf;
+      img.format.should.equal('jpeg');
+    });
+  });
+
+  describe('#parseImage', function(){
     it('should retrieve image name from the path', function(){
       var img = new Img({path: '/path/to/image.jpg'});
       img.image.should.equal('image.jpg');
@@ -70,18 +81,28 @@ describe('Image class', function(){
       img.image.should.equal(perioded);
     });
 
-    it('should exclude second output format from image path', function(){
-      var image = 'image.jpg',
-        img = new Img({path: '/path/to/' + image + '.webp'});
-      img.format.should.equal('webp');
-      img.image.should.equal(image);
-      img.path.should.equal('/path/to/' + image);
-    });
+    describe('#outputFormat', function () {
+      it('should exclude second output format from image path', function(){
+        var image = 'image.jpg',
+            img = new Img({path: '/path/to/' + image + '.webp'});
+        img.outputFormat.should.equal('webp');
+        img.image.should.equal(image);
+        img.path.should.equal('path/to/' + image);
+      });
 
+      it('should still get output format from perioded file name', function(){
+        var image = '8b0ccce0.0a6c.4270.9bc0.8b6dfaabea19.jpg',
+            img = new Img({path: '/path/to/' + image + '.webp'});
+        img.outputFormat.should.equal('webp');
+        img.image.should.equal(image);
+        img.path.should.equal('path/to/' + image);
+      });
+
+    });
   });
 
 
-  describe('#parseUrl()', function(){
+  describe('#parseUrl', function(){
     it('should return a clean path', function(){
       var img = new Img({path: '/path/to/image.jpg.json'});
       img.path.should.equal('path/to/image.jpg');
@@ -106,12 +127,12 @@ describe('Image class', function(){
   });
 
 
-  describe('bad formats', function(){
-    it('should set error if the format is not valid', function(){
-      var img = new Img({path: '/path/to/image.tiff'});
-      img.error.message.should.eq(Img.formatErrorText);
-    });
-  });
+  // describe('bad formats', function(){
+  //   it('should set error if the format is not valid', function(){
+  //     var img = new Img({path: '/path/to/image.tiff'});
+  //     img.error.message.should.eq(Img.formatErrorText);
+  //   });
+  // });
 
 
   it('should respond in an error state', function(){
