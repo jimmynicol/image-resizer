@@ -133,7 +133,10 @@ The available variables are as follows:
   IMAGE_404: null
 
   // Whitelist arbitrary HTTP source prefixes using EXTERNAL_SOURCE_*
-  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
+  EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/',
+
+  // Set a key used to force clients to sign requests (reduce risk of DDoS)
+  REQUEST_SIGNING_KEY: null
 ```
 
 
@@ -206,6 +209,23 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 
 It is worthy of note that this application will not scale images up, we are all about keeping images looking good. So a request for `h400` on an image of only 200px in height will not scale it up.
 
+## Request signing
+
+If a REQUEST_SIGNING_KEY is set all requests to the application will require a signature to be passed as the first url segment. This is used to verify the client is allowed to make the request. Request signing can reduce the risk DDoS. It's a simple mechanism to validate requests are coming from trusted clients.
+
+The following PHP method is an example of how a client can generate valid a signature:
+
+```
+<?php
+function createSignature($str) {
+  $hash = base64_encode(hash_hmac('sha1', $str, 'secret key that is same as configure on image-resizer', true));
+  return substr(str_replace(['+', '/', '='], ['-', '_', 'e'], $hash), 0, 8);
+}
+
+var_dump(':modifiers/path/to/image.jpg');
+
+// <img src="http://cdn.site.com/<?php echo createSignature(':modifiers/path/to/image.jpg'); ?>/:modifiers/path/to/image.jpg" alt="">
+```
 
 ## S3 source
 
