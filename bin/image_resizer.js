@@ -62,7 +62,8 @@ function createApplicationAt(dir){
       'image-resizer': '~' + pkg.version,
       'express': pkg.dependencies.express,
       'lodash': pkg.dependencies.lodash,
-      'chalk': pkg.dependencies.chalk
+      'chalk': pkg.dependencies.chalk,
+      'sharp': pkg.dependencies.sharp
     },
     devDependencies: pkg.devDependencies
   };

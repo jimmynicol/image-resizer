@@ -1,6 +1,6 @@
 'use strict';
 
-var _, Logger, env, modifiers, stream, util;
+var _, Logger, env, modifiers, stream, util, imgType;
 
 _         = require('lodash');
 Logger    = require('./utils/logger');
@@ -8,6 +8,7 @@ env       = require('./config/environment_vars');
 modifiers = require('./lib/modifiers');
 stream    = require('stream');
 util      = require('util');
+imgType   = require('image-type');
 
 
 // Simple stream to represent an error at an early stage, for instance a
@@ -34,11 +35,6 @@ function Image(request){
   // determine the name and format (mime) of the requested image
   this.parseImage(request);
 
-  // reject this request if the image format is not correct
-  if (_.indexOf(Image.validFormats, this.format) === -1){
-    this.error = new Error(Image.formatErrorText);
-  }
-
   // determine the requested modifications
   this.modifiers = modifiers.parse(request.path);
 
@@ -58,29 +54,32 @@ function Image(request){
   this.log = new Logger();
 }
 
-Image.validInputFormats = ['jpeg', 'jpg', 'gif', 'png', 'webp'];
-Image.validFormats = ['jpeg', 'png', 'webp'];
-Image.formatErrorText = 'not valid image format';
+Image.validInputFormats  = ['jpeg', 'jpg', 'gif', 'png', 'webp'];
+Image.validOutputFormats = ['jpeg', 'png', 'webp'];
 
 // Determine the name and format of the requested image
 Image.prototype.parseImage = function(request){
   var fileStr = _.last(request.path.split('/'));
+  var exts = fileStr.split('.').map( function (item) {
+    return item.toLowerCase();
+  });
 
   // clean out any metadata format
-  fileStr = fileStr.replace(/.json$/, '');
-
-  var exts = fileStr.split('.');
-  this.format = _.last(exts).toLowerCase();
-  if(this.format === 'jpg') {
-    this.format = 'jpeg';
+  if (exts[exts.length - 1] === 'json') {
+    this.format = exts[exts.length - 2];
+    exts.pop();
+    fileStr = exts.join('.');
   }
 
-  // if path contains valid input and output format extensions, remove the output format from path
-  if(exts.length > 1) {
-    var inputFormat = exts[exts.length - 2].toLowerCase();
-    if (_.indexOf(Image.validFormats, this.format) !== -1 &&
-      _.indexOf(Image.validInputFormats, inputFormat) !== -1){
-      fileStr = exts.slice(0, -1).join('.');
+  // if path contains valid output format, remove it from path
+  if (exts.length >= 3) {
+    var inputFormat = exts[exts.length - 2];
+    var outputFormat = exts.pop();
+
+    if (_.indexOf(Image.validInputFormats, inputFormat) > -1 &&
+        _.indexOf(Image.validOutputFormats, outputFormat) > -1) {
+      this.outputFormat = outputFormat;
+      fileStr = exts.join('.');
     }
   }
 
@@ -175,6 +174,38 @@ Image.prototype.sizeSaving = function(){
       size = this.contents.length;
   return ((oCnt - size)/oCnt * 100).toFixed(2);
 };
+
+
+Image.prototype.isFormatValid = function () {
+  if (Image.validInputFormats.indexOf(this.format) === -1) {
+    this.error = new Error(
+      'The listed format (' + this.format + ') is not valid.'
+    );
+  }
+};
+
+// Setter/getter for image format that normalizes jpeg formats
+Object.defineProperty(Image.prototype, 'format', {
+  get: function () { return this._format; },
+  set: function (value) {
+    this._format = value.toLowerCase();
+    if (this._format === 'jpg') { this._format = 'jpeg'; }
+  }
+});
+
+// Setter/getter for image contents that determines the format from the content
+// of the image to be processed.
+Object.defineProperty(Image.prototype, 'contents', {
+  get: function () { return this._contents; },
+  set: function (data) {
+    this._contents = data;
+
+    if (this.isBuffer()) {
+      this.format = imgType(data).ext;
+      this.isFormatValid();
+    }
+  }
+});
 
 
 module.exports = Image;

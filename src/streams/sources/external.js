@@ -31,7 +31,7 @@ util.inherits(External, stream.Readable);
 External.prototype._read = function(){
   var _this = this,
     url,
-    fbStream,
+    imgStream,
     bufs = [];
 
   if ( this.ended ){ return; }
@@ -47,24 +47,24 @@ External.prototype._read = function(){
 
   this.image.log.time(this.key);
 
-  fbStream = request.get(url);
-  fbStream.on('data', function(d){ bufs.push(d); });
-  fbStream.on('error', function(err){
+  imgStream = request.get(url);
+  imgStream.on('data', function(d){ bufs.push(d); });
+  imgStream.on('error', function(err){
     _this.image.error = new Error(err);
   });
-  fbStream.on('response', function(response) {
+  imgStream.on('response', function(response) {
     if (response.statusCode !== 200) {
       _this.image.error = new Error('Error ' + response.statusCode + ':');
     }
   });
-  fbStream.on('end', function(){
+  imgStream.on('end', function(){
     _this.image.log.timeEnd(_this.key);
     if(_this.image.isError()) {
       _this.image.error.message += Buffer.concat(bufs);
     } else {
       _this.image.contents = Buffer.concat(bufs);
+      _this.image.originalContentLength = contentLength(bufs);
     }
-    _this.image.originalContentLength = contentLength(bufs);
     _this.ended = true;
     _this.push(_this.image);
     _this.push(null);

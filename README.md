@@ -269,6 +269,8 @@ The `.buildpacks` file will then take care of the installation process.
 
 As mentioned above there is a minimum set of config vars that need to be set before `image-resizer` runs correctly.
 
+It is also of note that due to some issues with GCC, `sharp` can not be used on the older Heroku stacks. Currently it requires `cedar-14` stack.
+
 
 ## Local development
 
