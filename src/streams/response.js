@@ -63,7 +63,7 @@ ResponseWriter.prototype._write = function(image){
       this.response.set({
         'Cache-Control':  'public',
         'Expires':        this.expiresIn(env.JSON_EXPIRY),
-        'Last-Modified':  (new Date(0)).toGMTString(),
+        'Last-Modified':  (new Date(1000)).toGMTString(),
         'Vary':           'Accept-Encoding'
       });
     }
@@ -78,7 +78,7 @@ ResponseWriter.prototype._write = function(image){
     this.response.set({
       'Cache-Control':  'public',
       'Expires':        this.expiresIn(image.expiry),
-      'Last-Modified':  (new Date(0)).toGMTString(),
+      'Last-Modified':  (new Date(1000)).toGMTString(),
       'Vary':           'Accept-Encoding'
     });
   }
