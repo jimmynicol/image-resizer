@@ -166,7 +166,7 @@ function parseModifiers(mods, modArr) {
     value = item.slice(1);
 
     if (inArray(key, modKeys)){
-      
+
       // get the modifier object that responds to the listed key
       mod = getModifier(key);
 
@@ -180,47 +180,56 @@ function parseModifiers(mods, modArr) {
         if (mods.height > dimensionLimit) {
           mods.height = dimensionLimit;
         }
+        mods.hasModStr = true;
         break;
       case 'width':
         mods.width = string.sanitize(value);
         if (mods.width > dimensionLimit) {
           mods.width = dimensionLimit;
         }
+        mods.hasModStr = true;
         break;
       case 'square':
         mods.action = 'square';
         mods.height = string.sanitize(value);
         mods.width = string.sanitize(value);
+        mods.hasModStr = true;
         break;
       case 'gravity':
         value = string.sanitize(value, 'alpha');
         if (inArray(value.toLowerCase(), mod.values)){
           mods.gravity = value.toLowerCase();
         }
+        mods.hasModStr = true;
         break;
       case 'top':
         mods.y = string.sanitize(value);
+        mods.hasModStr = true;
         break;
       case 'left':
         mods.x = string.sanitize(value);
+        mods.hasModStr = true;
         break;
       case 'crop':
         value = string.sanitize(value, 'alpha');
         if (inArray(value.toLowerCase(), mod.values)){
           mods.crop = value.toLowerCase();
         }
+        mods.hasModStr = true;
         break;
       case 'external':
         value = string.sanitize(value, 'alphanumeric');
         if (inArray(value.toLowerCase(), mod.values)){
           mods.external = value.toLowerCase();
         }
+        mods.hasModStr = true;
         break;
       case 'filter':
         value = string.sanitize(value, 'alpha');
         if (inArray(value.toLowerCase(), mod.values)){
           mods.filter = value.toLowerCase();
         }
+        mods.hasModStr = true;
         break;
       case 'quality':
         value = string.sanitize(value);
@@ -229,6 +238,7 @@ function parseModifiers(mods, modArr) {
             max = mod.range[1];
           mods.quality = Math.max(min, Math.min(max, value));
         }
+        mods.hasModStr = true;
         break;
       }
 
@@ -281,7 +291,7 @@ exports.parse = function(requestUrl, namedMods, envOverride){
   // override 'env' for testing
   if(typeof envOverride !== 'undefined'){
     env = _.clone(envOverride);
-  }else{
+  } else {
     env = _.clone(environment);
   }
 
@@ -303,7 +313,8 @@ exports.parse = function(requestUrl, namedMods, envOverride){
     width: null,
     gravity: gravity.default,
     crop: crop.default,
-    quality: quality.default
+    quality: quality.default,
+    hasModStr: false
   };
 
   // check the request to see if it includes a named modifier

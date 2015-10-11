@@ -95,22 +95,12 @@ Image.prototype.parseUrl = function(request){
   // not mess things up
   parts[parts.length - 1] = this.image;
 
-  // if the request is for no modification or metadata then assume the s3path
-  // is the entire request path
-  if (_.indexOf(['original', 'json', 'resizeOriginal'], this.modifiers.action) > -1){
-    if (this.modifiers.external){
-      parts.shift();
-      this.path = parts.join('/');
-    } else {
-      this.path = parts.join('/');
-    }
+  // if there is a modifier string remove it
+  if (this.modifiers.hasModStr) {
+    parts.shift();
   }
 
-  // otherwise drop the first segment and set the s3path as the rest
-  else {
-    parts.shift();
-    this.path = parts.join('/');
-  }
+  this.path = parts.join('/');
 
   // account for any spaces in the path
   this.path = decodeURI(this.path);
