@@ -90,7 +90,7 @@ The available variables are as follows:
   AWS_ACCESS_KEY_ID: null,
   AWS_SECRET_ACCESS_KEY: null,
   AWS_REGION: null,
-  S3_BUCKET: null,
+  S3_BUCKET: null, // Can be separated by commas
 
   // Resize options
   RESIZE_PROCESS_ORIGINAL: true,
@@ -155,7 +155,7 @@ While `image-resizer` will work as a standalone app, almost all of its facility 
 
 A couple of routes are included with the default app, but the most important is the image generation one, which is as follows:
 
-`http://my.cdn.com/:modifiers/path/to/image.png[:format][:metadata]`
+`http://my.cdn.com/:modifiers/[:s3_bucket]/path/to/image.png[:format][:metadata]`
 
 Modifiers are a dash delimited string of the requested modifications to be made, these include:
 
@@ -199,6 +199,7 @@ Modifiers are a dash delimited string of the requested modifications to be made,
 * `http://my.cdn.com/h50/path/to/image.png`
 * `http://my.cdn.com/h50-w100/path/to/image.png`
 * `http://my.cdn.com/s50-gne/path/to/image.png`
+* `http://my.cdn.com/s50-gne/aws-bucket-name/path/to/image.png`
 * `http://my.cdn.com/path/to/image.png` - original image request, will be optimized but not resized
 
 
@@ -209,13 +210,15 @@ It is worthy of note that this application will not scale images up, we are all 
 
 ## S3 source
 
-By default `image-resizer` will use s3 as the image source. To access an s3 object the full path of the image within the bucket is used, minus the bucket name eg:
+By default `image-resizer` will use s3 as the image source. To access an s3 object the full path of the image within the bucket is used, minus the bucket name\* eg:
 
     https://s3.amazonaws.com/sample.bucket/test/image.png
 
 translates to:
 
     http://my.cdn.com/test/image.png
+
+\* If multiple buckets are defined in the environment variables, the bucket name must be added. In this case, if the bucket name is not specified, the first bucket will be chosen.
 
 
 ## External Sources
@@ -231,7 +234,7 @@ EXTERNAL_SOURCE_WIKIPEDIA: 'https://upload.wikimedia.org/wikipedia/'
 Then you can request images beginning with the provided path using the `ewikipedia` modifier, eg:
 
     http://my.cdn.com/ewikipedia/en/7/70/Example.png
-    
+
 translates to:
 
     https://upload.wikimedia.org/wikipedia/en/7/70/Example.png
@@ -291,4 +294,3 @@ Tests can be run with: `gulp test`
 ## Early promise-based version of codebase
 
 *NOTE:* Completely refactored and improved, if you are looking for the older version it is tagged as [v0.0.1](https://github.com/jimmynicol/image-resizer/tree/v0.0.1).
-
