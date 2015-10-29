@@ -91,6 +91,10 @@ function createApplicationAt(dir){
   copy(__dirname + '/./templates/.buildpacks.tmpl', dir + '/.buildpacks');
   copy(__dirname + '/./templates/Procfile.tmpl', dir + '/Procfile');
 
+  // create AWS Elastic Beanstalk config file
+  mkdir(dir + '/.ebextensions');
+  copy(__dirname + '/./templates/eb.config.tmpl', dir + '/.ebextensions/eb.config');
+
   // create a README
   copy(__dirname + '/./templates/README.md.tmpl', dir + '/README.md');
 
