@@ -1,0 +1,5 @@
+commands:
+    1_disable_sudo_error:
+        command: echo Defaults:root \!requiretty >> /etc/sudoers
+    2_install_libvips:
+        command: "curl -s https://raw.githubusercontent.com/lovell/sharp/master/preinstall.sh | sudo bash -"

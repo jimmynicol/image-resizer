@@ -44,10 +44,26 @@ s3Stream.prototype._read = function(){
     return this.push(null);
   }
 
+  var key, bkt;
+  var imagePath = this.image.path.replace(/^\//, '');
+  var buckets = (bucket) ? bucket.split(',') : [];
+  var parts = imagePath.split('/');
+
+  // match bucket for no bucket or multiple buckets
+  if (!bucket || bucket.length === 0 || ~buckets.indexOf(parts[0])) {
+    bkt = parts.shift();
+    key = parts.join('/');
+  }
+  // get first bucket and key
+  else {
+    bkt = buckets[0];
+    key = imagePath;
+  }
+
   // Set the AWS options
   var awsOptions = {
-    Bucket: bucket,
-    Key: this.image.path.replace(/^\//,'')
+    Bucket: bkt,
+    Key: key
   };
 
   this.image.log.time('s3');
