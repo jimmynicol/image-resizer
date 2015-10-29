@@ -46,11 +46,11 @@ s3Stream.prototype._read = function(){
 
   var key, bkt;
   var imagePath = this.image.path.replace(/^\//, '');
-  var buckets = bucket.split(',');
+  var buckets = (bucket) ? bucket.split(',') : [];
   var parts = imagePath.split('/');
 
   // match bucket for no bucket or multiple buckets
-  if (bucket.length === 0 || ~buckets.indexOf(parts[0])) {
+  if (!bucket || bucket.length === 0 || ~buckets.indexOf(parts[0])) {
     bkt = parts.shift();
     key = parts.join('/');
   }
