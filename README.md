@@ -17,6 +17,12 @@ When a new image size is requested of `image-resizer` via the CDN, it will pull 
 
 
 ## Getting Started
+When using Mac OS, make sure vips is installed:
+```
+$ brew install homebrew/science/vips
+```
+
+Then:
 
     $ npm install -g image-resizer gulp
     $ mkdir my_fancy_image_server
