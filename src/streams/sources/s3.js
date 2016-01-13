@@ -52,6 +52,17 @@ s3Stream.prototype._read = function(){
 
   this.image.log.time('s3');
 
+  if (!awsOptions.Key) {
+    this.image.log.timeEnd('s3');
+
+    this.image.error = new Error('Empty object key');
+    this.image.error.statusCode = 404;
+
+    this.ended = true;
+    this.push(this.image);
+    return this.push(null);
+  }
+
   client.getObject(awsOptions, function(err, data){
     _this.image.log.timeEnd('s3');
 
