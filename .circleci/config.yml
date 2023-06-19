@@ -1,0 +1,10 @@
+version: 2.1
+
+orbs:
+  soos: soos-io/sca@1.7.6 # Get the latest version at https://circleci.com/developer/orbs/orb/soos-io/sca
+
+workflows:
+  main:
+    jobs:
+      - soos/sca-analysis:
+          project_name: "Eric's SCA Scan"
